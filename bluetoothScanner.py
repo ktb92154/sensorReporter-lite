@@ -96,16 +96,17 @@ class btSensor:
             value = self.state
             self.rssi = self.getRSSI()
             if self.rssi is None:
-                self.logger.info("Signal lost - will wait just to be sure.")
+                if self.far_count < 5:
+                    self.logger.info("Signal lost - will wait just to be sure.")
                 self.far_count += 1
                 self.near_count -= 1
                 if self.near_count < 0:
                     self.near_count = 0
-                if self.far_count > 20:
-                    self.far_count = 20
+                if self.far_count > 15:
+                    self.far_count = 15
             elif self.rssi > 1:
                 if self.near_count < 10:
-                    self.logger.info("Got signal, waiting for stronger one: " + str(self.near_count * 10) + "%.")
+                    self.logger.info("Got signal from "+self.address+", waiting for stronger one: " + str(self.near_count * 10) + "%.")
                 self.far_count -= 1
                 self.near_count += 1
                 if self.far_count < 0:
