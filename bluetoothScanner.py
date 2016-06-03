@@ -107,7 +107,7 @@ class btSensor:
                     self.far_count = 0
                 if self.near_count > 10:
                     self.near_count = 10
-            if self.near_count > self.far_count and self.near_count > 10:
+            if self.near_count > self.far_count and self.near_count >= 10:
                 value = "ON"
             elif self.far_count > self.near_count and self.far_count > 3:
                 value = "OFF"
