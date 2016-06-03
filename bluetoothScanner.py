@@ -91,14 +91,8 @@ class btSensor:
         if mode == "RSSI":
             value = self.state
             self.rssi = self.getRSSI()
-		
-            #if debug:
-            #if self.rssi == None:
-            #    self.logger.info("Destination = " + self.destination + ", Current RSSI = None")
-            #else:
-            #    self.logger.info("Found! - Destination = " + self.destination + ", Current RSSI = " + str(self.rssi))
-
-            if self.rssi == None:
+            if self.rssi is None:
+                self.logger.info("Signal lost - will wait just to be sure.")
                 self.far_count += 1
                 self.near_count -= 1
                 if self.near_count < 0:
@@ -106,6 +100,7 @@ class btSensor:
                 if self.far_count > 20:
                     self.far_count = 20
             elif self.rssi > 1:
+                self.logger.info("Got signal, waiting for stronger one: "+str(self.near_count*10) + "%.")
                 self.far_count -= 1
                 self.near_count += 1
                 if self.far_count < 0:
