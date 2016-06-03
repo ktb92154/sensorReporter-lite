@@ -1,5 +1,5 @@
 # Introduction
-This script has been forked from [/rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter). I've removed everything but the Bluetooth, MQTT and REST support.
+This script has been forked from [rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter). I've removed everything but the Bluetooth, MQTT and REST support.
 
 # What can I use this script for?
 I'm using this script to detect whether someone is at home (based on the persons Bluetooth device). Since this script reports to MQTT, I can use my OpenHAB installation to get the information and run some rules.
@@ -60,19 +60,10 @@ or
 sudo systemctl start sensorReporter
 
 # Behavior
-There are three types of behaviors.
-
-1. Certain sensors require polling. The Bluetooth and WebIOPi GPIO sensors will
+Certain sensors require polling. The Bluetooth sensor will
 poll for the current state one per configured poll period. If the state of the 
 sensor has changed the new state is published to the configured MQTT/REST 
 destination.
-
-2. Other sensors are event driven and do not require polling. The Dash sensor 
-is and example. These sensors will receive events and report them instead of
-requiring polling. To turn off polling in the config file a Poll = -1 is used.
-
-3. Finally, Actuators subscribe to some communication destination (MQTT is 
-currently only supported) and perform some action when commanded. 
 
 Upon receipt of any message on the incoming destination configured in the MQTT 
 section, the script will publish the current state of all configured polling 
