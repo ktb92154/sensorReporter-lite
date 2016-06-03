@@ -1,24 +1,13 @@
 # sensorReporter
-A python script that polls a sensor and pubishes changes in its state to MQTT
-and/or REST as well as reacting to commands sent to it (MQTT RPi.GPIO support 
-only for now). It currently supports Raspberry Pi GPIO pins through WebIOPi or
-RPi.GPIO, Bluetooth device scanning, and Dash button press detection.
+A python script that polls a sensor and publishes changes in its state to MQTT and/or REST as well as reacting to commands sent to it. This lite version only supports Bluetooth device scanning. If you need Dash or GPIO, please see the original repo!
 
 # Dependencies
-This script depends on the paho library for MQTT, the webiopi library or the 
-RPi.GPIO for GPIO, python-bluez for Bluetooth, and scapy for Dash button 
-support. The install.sh in the config folder lists all the commands necessary 
-to install dependencies, link the current folder to /opt and set it up to start 
-as a service. It has the scripts and commands for both upstart and systemd.
-
-If running on a Raspberry Pi and using the GPIO sensors it must be run as root
-or running as a user who is a member of the gpio group if your image has 
-/dev/gpiomem with appropriate permissions.
+This script depends on the paho library for MQTT and python-bluez for Bluetooth support. The install.sh in the config folder lists all the commands necessary  to install dependencies, link the current folder to /opt and set it up to start  as a service. It has the scripts and commands for both upstart and systemd.
 
 # Organization
 The config folder contains an install.sh as described above, sensorReporter start 
 script for upstart systems (e.g raspbian wheezy), and a service file for systemd 
-type systems (e.g raspbian jessey, Ubuntu 15+). The install script will install 
+type systems (e.g raspbian jessie, Ubuntu 15+). The install script will install 
 dependencies using using apt-get and pip and copy and enable the start script to 
 init.d or /systemd/system and enalbe it so sensorReporter will start as a service 
 during boot. You must edit the script to match your system.
@@ -77,10 +66,8 @@ destination.
 is and example. These sensors will receive events and report them instead of
 requiring polling. To turn off polling in the config file a Poll = -1 is used.
 
-3. Finally, Actuators subscribe to some communication desintaion (MQTT is 
-currently only supported) and perform some action when commanded. The 
-rpiGPIOActuator is an example of an Actuator that will toggle or set the 
-configured pin upon receipt of a message.
+3. Finally, Actuators subscribe to some communication destination (MQTT is 
+currently only supported) and perform some action when commanded. 
 
 Upon receipt of any message on the incoming destination configured in the MQTT 
 section, the script will publish the current state of all configured polling 
@@ -100,42 +87,6 @@ https://code.google.com/p/pybluez/source/browse/examples/simple/inquiry.py
 
 When a configured device is detected it will report "ON" to the destination. 
 "OFF" is reported when the device is no longer detected.
-
-# Dash Button Specifics
-To discover the address of your Dash button, there is a getMac.py script in the
-config folder that will run for a short time and print the MAC address of any
-device that issues an ARP request while it is running. Run the script and then
-press the button and it will print that button's address.
-
-Upon receiving your Dash button, follow the configuration steps up to the point
-where it asks you to choose a product. Close the setup app at this point and 
-whenever you press the button the request will fail (i.e. you won't order 
-anything) but it will be able to join your network and issue the ARP request we
-use to tell when it is pressed.
-
-The code and approach to using Dash is inspired from the example found at
-https://medium.com/@edwardbenson/how-i-hacked-amazon-s-5-wifi-button-to-track-baby-data-794214b0bdd8#.kxt3lt5rh
-
-When a Dash button press is detected "Pressed" is sent to the destination.
-
-# WebIOPi GPIO Specifics
-The pin number is the BMC number for the pin, not the board number. If the 
-current state of the pin is LOW "CLOSED" is sent to the destination. If it is
-HIGH "OPEN" is sent to the destination.
-
-# RPi.GPIO Sensor Specifics
-The pin number is the BMC number for the pin, not the board number. If the 
-current state of the pin is LOW "CLOSED" is sent to the destination. If it is
-HIGH "OPEN" is sent to the desitnation.
-
-NOTE: Work is in progress to convert this script to no longer require polling.
-
-# RPi.GPIO Actuator Specifics
-The pin number is the BMX number for the pin, not the board number. The script 
-initialzes the pin to HIGH (appears to avoid the pin being set when the script 
-starts up. Upon receipt of a message, if Toggle is set to True the pin is set 
-to HIGH and half a second later set to LOW. If Toggle = False the pin is set to
-LOW if the received message is "ON" and HIGH otherwise.
 
 NOTE: Work is in progress to make the HIGH/LOW behavior more flexible to 
 support a wider range of applications.
