@@ -8,9 +8,6 @@
 #echo "Installing bluetooth"
 #sudo apt-get install bluez python-bluez
 
-#echo "Installing scapy"
-#pip install scapy
-
 #echo "Creating soft link in /opt"
 #cd ..
 #sudo ln -s `pwd` /opt/sensorReporter
