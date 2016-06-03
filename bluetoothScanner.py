@@ -6,9 +6,10 @@
 Credit From:  https://github.com/blakeman399/Bluetooth-Proximity-Light/blob/master/https/github.com/blakeman399/Bluetooth-Proximity-Light.py
 """
 
+import array
 import fcntl
 import struct
-import array
+
 import bluetooth
 import bluetooth._bluetooth as bt
 
@@ -16,7 +17,9 @@ debug = 0
 
 """Either use 'RSSI' mode, or 'LOOKUP' mode.  RSSI is more reliable."""
 mode = "RSSI"
-#mode = "LOOKUP"
+
+
+# mode = "LOOKUP"
 
 class btSensor:
     """Represents a Bluetooth device"""
@@ -25,7 +28,8 @@ class btSensor:
         """Finds whether the BT device is close and publishes its current state"""
 
         self.logger = logger
-        self.logger.info("----------Configuring BluetoothSensor: Address = " + address + " Destination = " + destination)
+        self.logger.info(
+            "----------Configuring BluetoothSensor: Address = " + address + " Destination = " + destination)
         self.logger.info("---Running in " + mode + " mode")
         self.address = address
         self.state = "OFF"
@@ -34,7 +38,7 @@ class btSensor:
         self.poll = poll
 
         # assume phone is initially far away
-        #self.far = True
+        # self.far = True
         self.far_count = 0
         self.near_count = 0
         self.rssi = None
@@ -44,7 +48,7 @@ class btSensor:
     def getPresence(self):
         """Detects whether the device is near by or not using lookup_name"""
         result = bluetooth.lookup_name(self.address, timeout=25)
-        if(result != None):
+        if (result != None):
             return "ON"
         else:
             return "OFF"
@@ -52,7 +56,7 @@ class btSensor:
     def getRSSI(self):
         """Detects whether the device is near by or not using RSSI"""
         addr = self.address
-		
+
         # Open hci socket
         hci_sock = bt.hci_open_dev()
         hci_fd = hci_sock.fileno()
@@ -60,19 +64,19 @@ class btSensor:
         # Connect to device (to whatever you like)
         bt_sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
         bt_sock.settimeout(10)
-        result = bt_sock.connect_ex((addr, 1))	# PSM 1 - Service Discovery
+        result = bt_sock.connect_ex((addr, 1))  # PSM 1 - Service Discovery
 
         try:
             # Get ConnInfo
             reqstr = struct.pack("6sB17s", bt.str2ba(addr), bt.ACL_LINK, "\0" * 17)
-            request = array.array("c", reqstr )
+            request = array.array("c", reqstr)
             handle = fcntl.ioctl(hci_fd, bt.HCIGETCONNINFO, request, 1)
             handle = struct.unpack("8xH14x", request.tostring())[0]
 
             # Get RSSI
-            cmd_pkt=struct.pack('H', handle)
+            cmd_pkt = struct.pack('H', handle)
             rssi = bt.hci_send_req(hci_sock, bt.OGF_STATUS_PARAM,
-                         bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, cmd_pkt)
+                                   bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, cmd_pkt)
             rssi = struct.unpack('b', rssi[3])[0]
 
             # Close sockets
@@ -82,7 +86,7 @@ class btSensor:
             return rssi
 
         except Exception, e:
-            #self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
+            # self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
             return None
 
     def checkState(self):
@@ -100,7 +104,8 @@ class btSensor:
                 if self.far_count > 20:
                     self.far_count = 20
             elif self.rssi > 1:
-                self.logger.info("Got signal, waiting for stronger one: "+str(self.near_count*10) + "%.")
+                if self.near_count < 10:
+                    self.logger.info("Got signal, waiting for stronger one: " + str(self.near_count * 10) + "%.")
                 self.far_count -= 1
                 self.near_count += 1
                 if self.far_count < 0:
@@ -113,8 +118,10 @@ class btSensor:
                 value = "OFF"
             else:
                 value = self.state
-            self.logger.debug("Destination " + self.destination + " far count = " + str(self.far_count) + " near count = " + str(self.near_count) + " RSSI = " + str(self.rssi))
-            
+            self.logger.debug(
+                "Destination " + self.destination + " far count = " + str(self.far_count) + " near count = " + str(
+                    self.near_count) + " RSSI = " + str(self.rssi))
+
         elif mode == "LOOKUP":
             value = self.getPresence()
 
