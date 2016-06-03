@@ -82,7 +82,7 @@ class btSensor:
             return rssi
 
         except Exception, e:
-            #self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
+            self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
             return None
 
     def checkState(self):
@@ -105,9 +105,6 @@ class btSensor:
                     self.near_count = 0
                 if self.far_count > 20:
                     self.far_count = 20
-                #self.logger.info("Destination " + self.destination + " not found")
-                #if self.far_count > 10:
-                #    value = "OFF"
             elif self.rssi > 1:
                 self.far_count -= 1
                 self.near_count += 1
@@ -115,10 +112,7 @@ class btSensor:
                     self.far_count = 0
                 if self.near_count > 20:
                     self.near_count = 20
-                #self.logger.info("Destination " + self.destination + " detected")
-                #if self.near_count > 10:
-                #    value = "ON"
-            if self.near_count > self.far_count and self.near_count > 15:
+            if self.near_count > self.far_count and self.near_count > 10:
                 value = "ON"
             elif self.far_count > self.near_count and self.far_count > 3:
                 value = "OFF"

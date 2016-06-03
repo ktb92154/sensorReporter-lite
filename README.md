@@ -1,4 +1,7 @@
-# sensorReporter
+# Introduction
+This script has been forked from [/rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter). I've removed everything but the Bluetooth, MQTT and REST support.
+
+# SensorReporter
 A python script that polls a sensor and publishes changes in its state to MQTT and/or REST as well as reacting to commands sent to it. This lite version only supports Bluetooth device scanning. If you need Dash or GPIO, please see the original repo!
 
 # Dependencies
