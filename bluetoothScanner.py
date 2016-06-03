@@ -82,7 +82,7 @@ class btSensor:
             return rssi
 
         except Exception, e:
-            self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
+            #self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
             return None
 
     def checkState(self):
