@@ -118,7 +118,7 @@ class btSensor:
                 value = "OFF"
             else:
                 value = self.state
-            self.logger.info("Destination " + self.destination + " far count = " + str(self.far_count) + " near count = " + str(self.near_count) + " RSSI = " + str(self.rssi))
+            self.logger.debug("Destination " + self.destination + " far count = " + str(self.far_count) + " near count = " + str(self.near_count) + " RSSI = " + str(self.rssi))
             
         elif mode == "LOOKUP":
             value = self.getPresence()
