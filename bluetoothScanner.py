@@ -96,7 +96,7 @@ class btSensor:
             value = self.state
             self.rssi = self.getRSSI()
             if self.rssi is None:
-                if self.far_count < 5:
+                if self.far_count < 3:
                     self.logger.info("Signal lost - will wait just to be sure.")
                 self.far_count += 1
                 self.near_count -= 1
