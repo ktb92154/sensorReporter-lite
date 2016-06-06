@@ -38,6 +38,13 @@ except ImportError:
     bluetoothSupport = False
     print 'Bluetooth is not supported on this machine'
 
+try:
+    from wifiScanner import *
+    wifiSupport = True
+except ImportError as test:
+    wifiSupport = False
+    print 'Wifi is not supported on this machine'
+    print test
 
 # Globals
 logger = logging.getLogger('sensorReporter')
@@ -87,8 +94,8 @@ def on_message(client, userdata, msg):
             if s.poll > 0:
                 s.checkState()
                 s.publishState()
-    except:
-        logger.info("Unexpected error:", sys.exec_info()[0])
+    except Exception as arg:
+        logger.info("Unexpected error:", arg)
 
 def main():
     """Polls the sensor pins and publishes any changes"""
@@ -160,13 +167,19 @@ def loadConfig(configFile):
             senType = config.get(section, "Type")
             rptType = config.get(section, "ReportType")
             if rptType == "REST" and restSupport:
+                print "Using REST..."
                 typeConn = restConn
             elif rptType == "MQTT" and mqttSupport:
+                print "Using MQTT..."
                 typeConn = mqttConn
-
 
             if senType == "Bluetooth" and bluetoothSupport:
                 sensors.append(btSensor(config.get(section, "Address"),
+                                        config.get(section, "Destination"),
+                                        typeConn.publish, logger,
+                                        config.getfloat(section, "Poll")))
+            elif senType == "Wifi" and wifiSupport:
+                sensors.append(wifiSensor(config.get(section, "Address"),
                                         config.get(section, "Destination"),
                                         typeConn.publish, logger,
                                         config.getfloat(section, "Poll")))
