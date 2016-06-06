@@ -48,7 +48,7 @@ class wifiSensor:
                 self.logger.info("Equal: %s", mac.lower() == self.address.lower())
 
                 if mac.lower() == self.address.lower():
-                    self.logger.info("Found matching MAC: %s - %t", mac, self.address)
+                    self.logger.info("Found matching MAC!")
                     value = "ON"
                     break
 
@@ -57,11 +57,12 @@ class wifiSensor:
                 self.logger.error("%s. Did you run as root?", e.strerror)
             else:
                 raise
+        self.logger.info("Returning value: %s", value)
         return value
 
     def checkNetwork(self):
         self.logger.info("Checking network...")
-        value = self.state;
+        value = self.state
         for network, netmask, _, interface, address in scapy.config.conf.route.routes:
             self.logger.info("Running trough network...")
             """ Skip loopback network and default gw """
@@ -81,10 +82,12 @@ class wifiSensor:
 
             if net:
                 value = self.getNetworkPresence(net, interface)
+                self.logger.info("Value: %s", value)
+                self.logger.info("State: %s", self.state)
                 if value != self.state:
                     self.state = value
                     self.publishState()
-                    break;
+                    break
 
     def getPresence(self):
         self.logger.info("Getting presence")
@@ -99,4 +102,5 @@ class wifiSensor:
 
     def publishState(self):
         """Publishes the current state"""
+        self.logger.info("Publishing state: %s", self.state)
         self.publish(self.state, self.destination)
