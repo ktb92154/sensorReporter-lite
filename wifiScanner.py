@@ -46,30 +46,28 @@ class wifiSensor:
 
     def scan_and_print_neighbors(self, net, interface, timeout=1):
         self.logger.info("arping %s on %s" % (net, interface))
+        value = "OFF"
         try:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
-                line = r.sprintf("%Ether.src%  %ARP.psrc%")
-                self.logger.info("Line: %s", line)
                 self.logger.info("MAC: %s", r.sprintf("%Ether.src%"))
-                try:
-                    hostname = socket.gethostbyaddr(r.psrc)
-                    line += " " + hostname[0]
-                except socket.herror:
-                    # failed to resolve
-                    pass
-                self.logger.info("Found line")
-                self.logger.info(line)
+                mac = r.sprintf("%Ether.src%")
+                if mac.toLower() == self.address.toLower():
+                    self.logger.info("Found matching MAC: %s - %t", mac, self.address)
+                    value = "ON"
+
         except socket.error as e:
             if e.errno == errno.EPERM:     # Operation not permitted
                 self.logger.error("%s. Did you run as root?", e.strerror)
             else:
                 raise
+        return value
 
     def checkNetwork(self):
         self.logger.info("Checking network...")
+        value = self.state;
         for network, netmask, _, interface, address in scapy.config.conf.route.routes:
-
+            self.logger.info("Running trough network...")
             """ Skip loopback network and default gw """
             if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
                 continue
@@ -86,12 +84,17 @@ class wifiSensor:
                 continue
 
             if net:
-               self.scan_and_print_neighbors(net, interface)
+                value = self.scan_and_print_neighbors(net, interface)
+
+        if value != self.state:
+            self.state = value
+            self.publishState()
 
     def getPresence(self):
+        self.logger.info("Getting presence")
         self.checkNetwork()
         """Detects whether the device is near by or not using lookup_name"""
-        self.logger.info("Getting presence")
+
 
     def checkState(self):
         """Detects and publishes any state change"""
