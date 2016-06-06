@@ -1,11 +1,3 @@
-"""
- Script:      bluetoothScanner.py
- Author:      Rich Koshak / Lenny Shirley <http://www.lennysh.com>
- Date:        February 11, 2016
- Purpose:     Scans for a Bluetooth device with a given address and publishes whether or not the device is present using RSSI figures, or lookup function.
-Credit From:  https://github.com/blakeman399/Bluetooth-Proximity-Light/blob/master/https/github.com/blakeman399/Bluetooth-Proximity-Light.py
-"""
-
 from __future__ import absolute_import, division, print_function
 import scapy.all
 import socket
@@ -44,7 +36,7 @@ class wifiSensor:
             return None
         return net
 
-    def scan_and_print_neighbors(self, net, interface, timeout=1):
+    def getNetworkPresence(self, net, interface, timeout=1):
         self.logger.info("arping %s on %s" % (net, interface))
         value = "OFF"
         try:
@@ -53,6 +45,7 @@ class wifiSensor:
                 mac = r.sprintf("%Ether.src%")
                 self.logger.info("MAC: %s", mac.lower())
                 self.logger.info("ADDR_MAC: %s", self.address.lower())
+                self.logger.info("Equal: %s", mac.lower() == self.address.lower())
 
                 if mac.lower() == self.address.lower():
                     self.logger.info("Found matching MAC: %s - %t", mac, self.address)
@@ -87,11 +80,11 @@ class wifiSensor:
                 continue
 
             if net:
-                value = self.scan_and_print_neighbors(net, interface)
-
-        if value != self.state:
-            self.state = value
-            self.publishState()
+                value = self.getNetworkPresence(net, interface)
+                if value != self.state:
+                    self.state = value
+                    self.publishState()
+                    break;
 
     def getPresence(self):
         self.logger.info("Getting presence")
@@ -101,7 +94,7 @@ class wifiSensor:
 
     def checkState(self):
         """Detects and publishes any state change"""
-        self.logger.info("Checking Wifi State")
+        self.logger.info("Checking Wifi state for %s", self.address)
         self.getPresence()
 
     def publishState(self):
