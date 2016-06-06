@@ -51,12 +51,13 @@ class wifiSensor:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
-                self.logger.info("MAC: %s", mac)
-                self.logger.info("ADDR_MAC: %s", self.address)
+                self.logger.info("MAC: %s", mac.lower())
+                self.logger.info("ADDR_MAC: %s", self.address.lower())
 
-            if mac.lower() == self.address.lower():
+                if mac.lower() == self.address.lower():
                     self.logger.info("Found matching MAC: %s - %t", mac, self.address)
                     value = "ON"
+                    break
 
         except socket.error as e:
             if e.errno == errno.EPERM:     # Operation not permitted
