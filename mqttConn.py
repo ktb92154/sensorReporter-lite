@@ -35,7 +35,7 @@ class mqttConnection(object):
 
     def publish(self, message, pubTopic):
         """Called by others to publish a message to the publish topic"""
-
+        self.logger.info("publish called! %s", message);
         try:
             rval = self.client.publish(pubTopic, message)
             if rval[0] == mqtt.MQTT_ERR_NO_CONN:
