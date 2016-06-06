@@ -51,10 +51,8 @@ class wifiSensor:
             for s, r in ans.res:
                 line = r.sprintf("%Ether.src%  %ARP.psrc%")
                 self.logger.info("Line: %s", line)
-                self.logger.info("s: %s", s)
-                self.logger.info("r: %s", r)
+                self.logger.info("MAC: %s", r.sprintf("%Ether.src%"))
                 try:
-                    self.logger.info("r.psrc: %s", r.psrc)
                     hostname = socket.gethostbyaddr(r.psrc)
                     line += " " + hostname[0]
                 except socket.herror:
