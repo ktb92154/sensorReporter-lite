@@ -88,7 +88,7 @@ class wifiSensor:
                 self.logger.info("State: %s", self.state)
                 if value != self.state:
                     self.state = value
-                    self.publishState()
+                    #self.publishState()
                     break
 
     def getPresence(self):
