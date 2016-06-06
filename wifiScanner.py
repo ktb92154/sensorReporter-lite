@@ -50,10 +50,11 @@ class wifiSensor:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
                 line = r.sprintf("%Ether.src%  %ARP.psrc%")
+                self.logger.info("Line: %s", line)
+                self.logger.info("s: %s", s)
+                self.logger.info("r: %s", r)
                 try:
                     self.logger.info("r.psrc: %s", r.psrc)
-                    self.logger.info("Ether.src: %s", Ether.src)
-                    self.logger.info("RP.psrc: %s", ARP.psrc)
                     hostname = socket.gethostbyaddr(r.psrc)
                     line += " " + hostname[0]
                 except socket.herror:
