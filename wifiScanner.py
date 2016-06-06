@@ -50,9 +50,11 @@ class wifiSensor:
         try:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
-                self.logger.info("MAC: %s", r.sprintf("%Ether.src%"))
                 mac = r.sprintf("%Ether.src%")
-                if mac.toLower() == self.address.toLower():
+                self.logger.info("MAC: %s", mac)
+                self.logger.info("ADDR_MAC: %s", self.address)
+
+            if mac.toLower() == self.address.toLower():
                     self.logger.info("Found matching MAC: %s - %t", mac, self.address)
                     value = "ON"
 
