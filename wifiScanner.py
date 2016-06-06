@@ -54,7 +54,7 @@ class wifiSensor:
                 self.logger.info("MAC: %s", mac)
                 self.logger.info("ADDR_MAC: %s", self.address)
 
-            if mac.toLower() == self.address.toLower():
+            if mac.lower() == self.address.lower():
                     self.logger.info("Found matching MAC: %s - %t", mac, self.address)
                     value = "ON"
 
