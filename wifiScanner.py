@@ -51,11 +51,15 @@ class wifiSensor:
             for s, r in ans.res:
                 line = r.sprintf("%Ether.src%  %ARP.psrc%")
                 try:
+                    self.logger.info("r.psrc: %s", r.psrc)
+                    self.logger.info("Ether.src: %s", Ether.src)
+                    self.logger.info("RP.psrc: %s", ARP.psrc)
                     hostname = socket.gethostbyaddr(r.psrc)
                     line += " " + hostname[0]
                 except socket.herror:
                     # failed to resolve
                     pass
+                self.logger.info("Found line")
                 self.logger.info(line)
         except socket.error as e:
             if e.errno == errno.EPERM:     # Operation not permitted
