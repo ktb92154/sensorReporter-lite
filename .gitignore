@@ -1,2 +1,3 @@
 *.pyc
 sensorReporter.ini
+mqttReporter.log
