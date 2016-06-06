@@ -2,8 +2,6 @@ from __future__ import absolute_import, division, print_function
 import scapy.all
 import socket
 import math
-import traceback
-import sys
 debug = 0
 
 
@@ -104,6 +102,5 @@ class wifiSensor:
 
     def publishState(self):
         """Publishes the current state"""
-        traceback.print_stack(file=sys.stdout)
         self.logger.info("Publishing state: %s", self.state)
         self.publish(self.state, self.destination)
