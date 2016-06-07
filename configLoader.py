@@ -2,7 +2,7 @@ import ConfigParser
 
 class ConfigLoader:
     def __init__(self):
-        pass
+        config = ConfigParser.ConfigParser(allow_no_value=True)
 
     def config_logger(self, file, size, num):
         """Configure a rotating log"""

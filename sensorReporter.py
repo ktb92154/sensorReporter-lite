@@ -52,7 +52,6 @@ if restSupport:
     restConn = RestConnection()
 if mqttSupport:
     mqttConn = MQTTConnection()
-config = ConfigParser.ConfigParser(allow_no_value=True)
 sensors = []
 actuators = []
 
