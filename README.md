@@ -75,11 +75,11 @@ A full example can be seen in the sensorReporter_demo.ini file of the project.
 # Usage
 This script must always be run as root - at least when using Wifi for presence detection.
 
-To run the script manually:
+To run the script manually (make sure you've created the sensorReporter.ini before):
 
 `sudo python sensorReporter sensorReporter.ini`
 
-If it has been installed, run:
+If it has been installed as a systemd service (see config/install.sh for more information), run:
 
 `sudo systemctl start sensorReporter`
 
