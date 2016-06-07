@@ -41,8 +41,9 @@ class ConfigLoader:
                         self.config.get("MQTT", "LWT-Topic"), self.config.get("MQTT", "LWT-Msg"),
                         self.config.get("MQTT", "Topic"), on_message,
                         self.config.get("MQTT", "TLS"))
-    def disconnect_mqtt(self):
-        self.mqtt_conn.client.disconnect()
+
+    def get_mqtt(self):
+        return self.mqtt_conn
 
     def config_rest(self, url):
         """Configure the REST connection"""

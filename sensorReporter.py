@@ -60,7 +60,7 @@ def cleanup_and_exit():
 
     logger.warn("Terminating the program")
     try:
-       config_loader.disconnect_mqtt()
+       config_loader.get_mqtt().client.disconnect()
        logger.info("Successfully disconnected from the MQTT server")
     except:
         pass
