@@ -32,19 +32,22 @@ class ConfigLoader:
 
     def config_mqtt(self):
         """Configure the MQTT connection"""
-
+        self.mqtt_conn = MQTTConnection()
         self.logger.info("Configuring the MQTT Broker " + self.config.get("MQTT", "Host"))
-        mqttConn.config(logger, self.config.get("MQTT", "User"),
+        self.mqtt_conn.config(logger, self.config.get("MQTT", "User"),
                         self.config.get("MQTT", "Password"), self.config.get("MQTT", "Host"),
                         self.config.getint("MQTT", "Port"),
                         self.config.getfloat("MQTT", "Keepalive"),
                         self.config.get("MQTT", "LWT-Topic"), self.config.get("MQTT", "LWT-Msg"),
                         self.config.get("MQTT", "Topic"), on_message,
                         self.config.get("MQTT", "TLS"))
+    def disconnect_mqtt(self):
+        self.mqtt_conn.client.disconnect()
 
     def config_rest(self, url):
         """Configure the REST connection"""
-        restConn.config(logger, url)
+        rest_conn = RestConnection()
+        rest_conn.config(logger, url)
         self.logger.info("REST URL set to: " + url)
 
     def load_config(self, rest_support, mqtt_support, wifi_support, bluetooth_support):

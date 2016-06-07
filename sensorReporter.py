@@ -47,10 +47,7 @@ except ImportError as test:
 # Globals
 config_loader = ConfigLoader(sys.argv[1])
 logger = config_loader.config_logger()
-if restSupport:
-    restConn = RestConnection()
-if mqttSupport:
-    mqttConn = MQTTConnection()
+
 actuators = []
 # The decorators below causes the creation of a SignalHandler attached to this function for each of the
 # signals we care about using the handles function above. The resultant SignalHandler is registered with
@@ -63,8 +60,8 @@ def cleanup_and_exit():
 
     logger.warn("Terminating the program")
     try:
-        mqttConn.client.disconnect()
-        logger.info("Successfully disconnected from the MQTT server")
+       config_loader.disconnect_mqtt()
+       logger.info("Successfully disconnected from the MQTT server")
     except:
         pass
     sys.exit(0)
