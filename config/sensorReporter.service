@@ -1,5 +1,7 @@
 [Unit]
 Description=Reports presence status over MQTT and REST
+After=network.target
+Before=getty@tty1.service
 
 [Service]
 Type=simple
