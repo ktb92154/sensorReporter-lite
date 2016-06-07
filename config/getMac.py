@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+"""
 from scapy.all import *
 
 def arp_display(pkt):
@@ -8,3 +8,4 @@ def arp_display(pkt):
             print "ARP Probe from: " + pkt[ARP].hwsrc
 
 print sniff(prn=arp_display, filter="arp", store=0, count=30)
+"""

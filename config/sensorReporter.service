@@ -1,5 +1,5 @@
 [Unit]
-Description=Reports status and sensor readings over MQTT and REST
+Description=Reports presence status over MQTT and REST
 
 [Service]
 Type=simple
