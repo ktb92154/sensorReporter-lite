@@ -2,7 +2,7 @@
 If you need a script to detect whether someone is at home or not, this might be your solution.
 
 # What does this script do?
-This script detects wheter certain Bluetooth or WIFI MAC addresses are either nearby (Bluetooth) or in your home network (Wifi) and then sends a message either to an MQTT queue or a REST interface.
+This script detects whether certain Bluetooth or WIFI MAC addresses are either nearby (Bluetooth) or in your home network (Wifi) and then sends a message either to an MQTT queue or a REST interface.
 
 # What can I use this script for?
 I'm using this script to detect whether I or my wife are at home (we're always taking our smartphones with us). If we're both not at home, I will trigger certain events at home, since my [OpenHAB](http://www.openhab.org/) installation is attached to the same MQTT queue like this script (which runs on a Raspberry Pi 3).

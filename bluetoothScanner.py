@@ -17,11 +17,9 @@ debug = 0
 
 """Either use 'RSSI' mode, or 'LOOKUP' mode.  RSSI is more reliable."""
 mode = "RSSI"
-
-
 # mode = "LOOKUP"
 
-class btSensor:
+class BtSensor:
     """Represents a Bluetooth device"""
 
     def __init__(self, address, destination, publish, logger, poll):
@@ -29,7 +27,7 @@ class btSensor:
 
         self.logger = logger
         self.logger.info(
-            "----------Configuring BluetoothSensor: Address = " + address + " Destination = " + destination)
+                "----------Configuring BluetoothSensor: Address = " + address + " Destination = " + destination)
         self.logger.info("---Running in " + mode + " mode")
         self.address = address
         self.state = "OFF"
@@ -43,17 +41,17 @@ class btSensor:
         self.near_count = 0
         self.rssi = None
 
-        self.publishState()
+        self.publish_state()
 
-    def getPresence(self):
+    def get_presence(self):
         """Detects whether the device is near by or not using lookup_name"""
         result = bluetooth.lookup_name(self.address, timeout=25)
-        if (result != None):
+        if result is not None:
             return "ON"
         else:
             return "OFF"
 
-    def getRSSI(self):
+    def get_rssi(self):
         """Detects whether the device is near by or not using RSSI"""
         addr = self.address
 
@@ -64,13 +62,13 @@ class btSensor:
         # Connect to device (to whatever you like)
         bt_sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
         bt_sock.settimeout(10)
-        result = bt_sock.connect_ex((addr, 1))  # PSM 1 - Service Discovery
+        bt_sock.connect_ex((addr, 1))  # PSM 1 - Service Discovery
 
         try:
             # Get ConnInfo
             reqstr = struct.pack("6sB17s", bt.str2ba(addr), bt.ACL_LINK, "\0" * 17)
             request = array.array("c", reqstr)
-            handle = fcntl.ioctl(hci_fd, bt.HCIGETCONNINFO, request, 1)
+            fcntl.ioctl(hci_fd, bt.HCIGETCONNINFO, request, 1)
             handle = struct.unpack("8xH14x", request.tostring())[0]
 
             # Get RSSI
@@ -89,12 +87,12 @@ class btSensor:
             # self.logger.error("<Bluetooth> (getRSSI) %s" % (repr(e)))
             return None
 
-    def checkState(self):
+    def check_state(self):
         """Detects and publishes any state change"""
 
         if mode == "RSSI":
             value = self.state
-            self.rssi = self.getRSSI()
+            self.rssi = self.get_rssi()
             if self.rssi is None:
                 if self.far_count < 3:
                     self.logger.info("Signal lost - will wait just to be sure.")
@@ -106,7 +104,9 @@ class btSensor:
                     self.far_count = 15
             elif self.rssi > 1:
                 if self.near_count < 10:
-                    self.logger.info("Got signal from "+self.address+", waiting for stronger one: " + str(self.near_count * 10) + "%.")
+                    self.logger.info(
+                            "Got signal from " + self.address + ", waiting for stronger one: " + str(
+                                    self.near_count * 10) + "%.")
                 self.far_count -= 1
                 self.near_count += 1
                 if self.far_count < 0:
@@ -120,11 +120,12 @@ class btSensor:
             else:
                 value = self.state
             self.logger.debug(
-                "Destination " + self.destination + " far count = " + str(self.far_count) + " near count = " + str(
-                    self.near_count) + " RSSI = " + str(self.rssi))
+                    "Destination " + self.destination + " far count = " + str(
+                            self.far_count) + " near count = " + str(
+                            self.near_count) + " RSSI = " + str(self.rssi))
 
         elif mode == "LOOKUP":
-            value = self.getPresence()
+            value = self.get_presence()
 
         else:
             msg = "Invalid 'mode' specified in 'bluetoothScanner.py' !"
@@ -134,9 +135,9 @@ class btSensor:
 
         if value != self.state:
             self.state = value
-            self.publishState()
+            self.publish_state()
 
-    def publishState(self):
+    def publish_state(self):
         """Publishes the current state"""
 
         self.publish(self.state, self.destination)

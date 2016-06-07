@@ -10,14 +10,14 @@
 import sys
 import paho.mqtt.client as mqtt
 
-class mqttConnection(object):
+class MQTTConnection(object):
     """Centralizes the MQTT logic"""
 
-    def config(self, logger, user, password, host, prt, ka, lwtTopic, lwtMsg, topic, msgProc, tls):
+    def config(self, logger, user, password, host, prt, ka, lwt_topic, lwt_message, topic, message_proc, tls):
         """Creates and connects the client"""
-        
+
         self.logger = logger
-        self.msgProc = msgProc # function that gets called when a message is received
+        self.msgProc = message_proc # function that gets called when a message is received
         self.topic = topic
 
         self.client = mqtt.Client()
@@ -27,34 +27,44 @@ class mqttConnection(object):
         self.client.on_message = self.msgProc
         self.client.on_disconnect = self.on_disconnect
         self.client.username_pw_set(user, password)
-        self.client.will_set(lwtTopic, lwtMsg, 0, False)
+        self.client.will_set(lwt_topic, lwt_message, 0, False)
         self.client.connect(host, port=prt, keepalive=ka)
         self.client.loop_start()
 
         self.registered = []
 
-    def publish(self, message, pubTopic):
-        """Called by others to publish a message to the publish topic"""
-        self.logger.info("publish called! %s", message);
+    def publish(self, message, pub_topic):
+        """Called by others to publish a message to the publish topic
+        :param message:
+        :param pub_topic:
+        """
         try:
-            rval = self.client.publish(pubTopic, message)
+            rval = self.client.publish(pub_topic, message)
             if rval[0] == mqtt.MQTT_ERR_NO_CONN:
-                self.logger.error("Error publishing update: " + message +  " to " + pubTopic)
+                self.logger.error("Error publishing update: " + message +  " to " + pub_topic)
                 self.comms.reconnect() # try to reconnect again
             else:
-                self.logger.info("Published message " + message + " to " + pubTopic)
+                self.logger.info("Published message " + message + " to " + pub_topic)
         except:
             print "Unexpected error publishing message:", sys.exc_info()[0]
 
-    def register(self, subTopic, msgHandler):
-        """Registers an actuator to receive messages"""
-        self.logger.info("Registering for messages on " + subTopic)
-        self.registered.append((subTopic, msgHandler))
-        self.client.subscribe(subTopic)
-        self.client.message_callback_add(subTopic, msgHandler)
+    def register(self, sub_topic, message_handler):
+        """Registers an actuator to receive messages
+        :param sub_topic:
+        :param message_handler:
+        """
+        self.logger.info("Registering for messages on " + sub_topic)
+        self.registered.append((sub_topic, message_handler))
+        self.client.subscribe(sub_topic)
+        self.client.message_callback_add(sub_topic, message_handler)
 
     def on_connect(self, client, userdata, flags, rc):
-        """Called when the MQQT client successfully connects to the broker"""
+        """Called when the MQQT client successfully connects to the broker
+        :param client:
+        :param userdata:
+        :param flags:
+        :param rc:
+        """
 
         self.logger.info("Connected with result code "+str(rc)+", subscribing to command topic " + self.topic)
         
@@ -69,7 +79,11 @@ class mqttConnection(object):
         self.msgProc(None, None, None)
 
     def on_disconnect(self, client, userdata, rc):
-        """Called when the MQTT client disconnects from the broker"""
+        """Called when the MQTT client disconnects from the broker
+        :param client:
+        :param userdata:
+        :param rc:
+        """
 
         self.logger.info("Disconnected from the MQTT broker with code " + str(rc))
 

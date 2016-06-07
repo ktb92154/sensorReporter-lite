@@ -18,14 +18,14 @@ from threading import *
 from signalProc import *
 
 try:
-    from restConn import restConnection
+    from restConn import RestConnection
     restSupport = True
 except:
     restSupport = False
     print 'REST required files not found. REST not supported in this script.'
 
 try:
-    from mqttConn import mqttConnection
+    from mqttConn import MQTTConnection
     mqttSupport = True
 except:
     mqttSupport = False
@@ -49,9 +49,9 @@ except ImportError as test:
 # Globals
 logger = logging.getLogger('sensorReporter')
 if restSupport:
-    restConn = restConnection()
+    restConn = RestConnection()
 if mqttSupport:
-    mqttConn = mqttConnection()
+    mqttConn = MQTTConnection()
 config = ConfigParser.ConfigParser(allow_no_value=True)
 sensors = []
 actuators = []
@@ -78,7 +78,7 @@ def cleanup_and_exit():
 #@cleanup_and_exit.blocks_on
 def check(s):
     """Gets the current state of the passed in sensor and publishes it"""
-    s.checkState()
+    s.check_state()
 
 def on_message(client, userdata, msg):
     """Called when a message is received from the MQTT broker, send the current sensor state.
@@ -92,8 +92,8 @@ def on_message(client, userdata, msg):
         logger.info("getting states")
         for s in sensors:
             if s.poll > 0:
-                s.checkState()
-                s.publishState()
+                s.check_state()
+                s.publish_state()
     except Exception as arg:
         logger.info("Unexpected error: %s", arg)
 
@@ -104,7 +104,7 @@ def main():
         print "No config file specified on the command line!"
         sys.exit(1)
 
-    loadConfig(sys.argv[1])
+    load_config(sys.argv[1])
     for s in sensors:
         s.lastPoll = time.time()
 
@@ -121,7 +121,7 @@ def main():
 
 #------------------------------------------------------------------------------
 # Initialization
-def configLogger(file, size, num):
+def config_logger(file, size, num):
     """Configure a rotating log"""
     print "Configuring logger: file = " + file + " size = " + str(size) + " num = " + str(num)
     logger.setLevel(logging.DEBUG)
@@ -132,73 +132,73 @@ def configLogger(file, size, num):
     logger.addHandler(fh)
     logger.info("---------------Started")
 
-def configMQTT(config):
+def config_mqtt(mqtt_config):
     """Configure the MQTT connection"""
 
-    logger.info("Configuring the MQTT Broker " + config.get("MQTT", "Host"))
-    mqttConn.config(logger, config.get("MQTT", "User"),
-                    config.get("MQTT", "Password"), config.get("MQTT", "Host"),
-                    config.getint("MQTT", "Port"), config.getfloat("MQTT", "Keepalive"),
-                    config.get("MQTT", "LWT-Topic"), config.get("MQTT", "LWT-Msg"),
-                    config.get("MQTT", "Topic"), on_message, config.get("MQTT", "TLS"))
+    logger.info("Configuring the MQTT Broker " + mqtt_config.get("MQTT", "Host"))
+    mqttConn.config(logger, mqtt_config.get("MQTT", "User"),
+                    mqtt_config.get("MQTT", "Password"), mqtt_config.get("MQTT", "Host"),
+                    mqtt_config.getint("MQTT", "Port"), mqtt_config.getfloat("MQTT", "Keepalive"),
+                    mqtt_config.get("MQTT", "LWT-Topic"), mqtt_config.get("MQTT", "LWT-Msg"),
+                    mqtt_config.get("MQTT", "Topic"), on_message, mqtt_config.get("MQTT", "TLS"))
 
-def configREST(url):
+def config_rest(url):
     """Configure the REST connection"""
     restConn.config(logger, url)
     logger.info("REST URL set to: " + url)
 
-def loadConfig(configFile):
+def load_config(config_file):
     """Read in the config file, set up the logger, and populate the sensors"""
-    print "Loading " + configFile
-    config.read(configFile)
+    print "Loading " + config_file
+    config.read(config_file)
 
-    configLogger(config.get("Logging", "File"),
-                 config.getint("Logging", "MaxSize"),
-                 config.getint("Logging", "NumFiles"))
+    config_logger(config.get("Logging", "File"),
+                  config.getint("Logging", "MaxSize"),
+                  config.getint("Logging", "NumFiles"))
 
     if restSupport and config.has_section("REST"):
-        configREST(config.get("REST", "URL"))
+        config_rest(config.get("REST", "URL"))
     if mqttSupport:
-        configMQTT(config)
+        config_mqtt(config)
 
     logger.info("Populating the sensor's list...")
     for section in config.sections():
         if section.startswith("Sensor"):
-            senType = config.get(section, "Type")
-            rptType = config.get(section, "ReportType")
-            if rptType == "REST" and restSupport:
+            sensor_type = config.get(section, "Type")
+            report_type = config.get(section, "ReportType")
+            if report_type == "REST" and restSupport:
                 print "Using REST..."
-                typeConn = restConn
-            elif rptType == "MQTT" and mqttSupport:
+                type_connection = restConn
+            elif report_type == "MQTT" and mqttSupport:
                 print "Using MQTT..."
-                typeConn = mqttConn
+                type_connection = mqttConn
 
-            if senType == "Bluetooth" and bluetoothSupport:
-                sensors.append(btSensor(config.get(section, "Address"),
+            if sensor_type == "Bluetooth" and bluetoothSupport:
+                sensors.append(BtSensor(config.get(section, "Address"),
                                         config.get(section, "Destination"),
-                                        typeConn.publish, logger,
+                                        type_connection.publish, logger,
                                         config.getfloat(section, "Poll")))
-            elif senType == "Wifi" and wifiSupport:
-                sensors.append(wifiSensor(config.get(section, "Address"),
+            elif sensor_type == "Wifi" and wifiSupport:
+                sensors.append(WifiSensor(config.get(section, "Address"),
                                         config.get(section, "Destination"),
-                                        typeConn.publish, logger,
+                                        type_connection.publish, logger,
                                         config.getfloat(section, "Poll")))
             else:
-                msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (senType, rptType)
+                msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (sensor_type, report_type)
                 print msg
                 logger.error(msg)
 
         elif section.startswith("Actuator"):
-            actType = config.get(section, "Type")
-            subType = config.get(section, "SubscribeType")
-            if subType == "REST" and restSupport:
+            actuator_type = config.get(section, "Type")
+            subscribe_type = config.get(section, "SubscribeType")
+            if subscribe_type == "REST" and restSupport:
                 msg = "REST based actuators are not yet supported"
                 print msg
                 logger.error(msg)
-            elif subType == "MQTT" and mqttSupport:
-                typeConn = mqttConn
+            elif subscribe_type == "MQTT" and mqttSupport:
+                type_connection = mqttConn
             else:
-                msg = "Skipping actuator '%s' due to lack of support in the script for '%s'. Please see preceding error messages." % (config.get(section, "Destination"), subType)
+                msg = "Skipping actuator '%s' due to lack of support in the script for '%s'. Please see preceding error messages." % (config.get(section, "Destination"), subscribe_type)
                 print msg
                 logger.warn(msg)
                 continue

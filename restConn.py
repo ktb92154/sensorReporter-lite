@@ -11,7 +11,7 @@ from requests.exceptions import ConnectionError
 
 debug = 1
 
-class restConnection(object):
+class RestConnection(object):
     """Centralizes the REST logic"""
 
     def config(self, logger, url):

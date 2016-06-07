@@ -7,7 +7,7 @@ import math
 debug = 0
 
 
-class wifiSensor:
+class WifiSensor:
     """Represents a Bluetooth device"""
 
     def __init__(self, address, destination, publish, logger, poll):
@@ -22,14 +22,15 @@ class wifiSensor:
         self.publish = publish
         self.poll = poll
 
-        self.publishState()
+        self.publish_state()
 
-    def long2net(self,arg):
+    @staticmethod
+    def long2net(arg):
         if arg <= 0 or arg >= 0xFFFFFFFF:
             raise ValueError("illegal netmask value", hex(arg))
         return 32 - int(round(math.log(0xFFFFFFFF - arg, 2)))
 
-    def to_CIDR_notation(self,bytes_network, bytes_netmask):
+    def to_cidr_notation(self, bytes_network, bytes_netmask):
         network = scapy.utils.ltoa(bytes_network)
         netmask = self.long2net(bytes_netmask)
         net = "%s/%s" % (network, netmask)
@@ -38,7 +39,7 @@ class wifiSensor:
             return None
         return net
 
-    def getNetworkPresence(self, net, interface, timeout=1):
+    def get_network_presence(self, net, interface, timeout=1):
         self.logger.info("arping %s on %s" % (net, interface))
         value = "OFF"
         try:
@@ -58,7 +59,7 @@ class wifiSensor:
         self.logger.info("Returning value: %s", value)
         return value
 
-    def checkNetwork(self):
+    def check_network(self):
         self.logger.info("Checking network...")
         value = self.state
         for network, netmask, _, interface, address in scapy.config.conf.route.routes:
@@ -70,7 +71,7 @@ class wifiSensor:
             if netmask <= 0 or netmask == 0xFFFFFFFF:
                 continue
 
-            net = self.to_CIDR_notation(network, netmask)
+            net = self.to_cidr_notation(network, netmask)
 
             if interface != scapy.config.conf.iface:
                 # see http://trac.secdev.org/scapy/ticket/537
@@ -79,7 +80,7 @@ class wifiSensor:
                 continue
 
             if net:
-                value = self.getNetworkPresence(net, interface)
+                value = self.get_network_presence(net, interface)
                 self.logger.info("Value: %s", value)
                 self.logger.info("State: %s", self.state)
                 if value != self.state:
@@ -87,18 +88,18 @@ class wifiSensor:
                     #self.publishState()
                     break
 
-    def getPresence(self):
+    def get_presence(self):
         self.logger.info("Getting presence")
-        self.checkNetwork()
+        self.check_network()
         """Detects whether the device is near by or not using lookup_name"""
 
 
-    def checkState(self):
+    def check_state(self):
         """Detects and publishes any state change"""
         self.logger.info("Checking Wifi state for %s", self.address)
-        self.getPresence()
+        self.get_presence()
 
-    def publishState(self):
+    def publish_state(self):
         """Publishes the current state"""
         self.logger.info("Publishing state: %s", self.state)
         self.publish(self.state, self.destination)

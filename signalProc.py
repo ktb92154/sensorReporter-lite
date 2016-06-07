@@ -2,8 +2,8 @@
  Script: signalProc.py
  Author: Rich Koshak
  Date:   October 22, 2015
- Purpose: Provide a mechanism whereby fucntions can be run and in the event of a
-   term singal exit cleanly.
+ Purpose: Provide a mechanism whereby functions can be run and in the event of a
+   term signal exit cleanly.
 
   Based on code published here:
   http://stackoverflow.com/questions/14123592/implementing-signal-handling-on-a-sleep-loop
