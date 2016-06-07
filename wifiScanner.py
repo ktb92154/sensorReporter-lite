@@ -44,6 +44,7 @@ class wifiSensor:
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
                 if mac.lower() == self.address.lower():
+                    self.logger.info("Found matching MAC: %s",mac.lower())
                     value = "ON"
                     break
 
@@ -81,7 +82,7 @@ class wifiSensor:
                 self.logger.info("State: %s", self.state)
                 if value != self.state:
                     self.state = value
-                    self.publishState()
+                    #self.publishState()
                     break
 
     def getPresence(self):
