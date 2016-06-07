@@ -15,35 +15,6 @@ from threading import *
 from signalProc import *
 from configLoader import *
 
-try:
-    from restConn import RestConnection
-    restSupport = True
-except:
-    restSupport = False
-    print 'REST required files not found. REST not supported in this script.'
-
-try:
-    from mqttConn import MQTTConnection
-    mqttSupport = True
-except:
-    mqttSupport = False
-    print 'MQTT required files not found. MQTT not supported in this script.'
-
-try:
-    from bluetoothScanner import *
-    bluetoothSupport = True
-except ImportError:
-    bluetoothSupport = False
-    print 'Bluetooth is not supported on this machine'
-
-try:
-    from wifiScanner import *
-    wifiSupport = True
-except ImportError as test:
-    wifiSupport = False
-    print 'Wifi is not supported on this machine'
-    print test
-
 # Globals
 config_loader = ConfigLoader(sys.argv[1])
 logger = config_loader.config_logger()
@@ -97,7 +68,7 @@ def main():
         sys.exit(1)
 
 
-    loaded_sensors = config_loader.load_config(restSupport, mqttSupport, wifiSupport, bluetoothSupport)
+    loaded_sensors = config_loader.load_config()
 
     for s in loaded_sensors:
         s.lastPoll = time.time()

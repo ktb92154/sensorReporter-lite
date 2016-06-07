@@ -2,6 +2,35 @@ import ConfigParser
 import logging
 import logging.handlers
 
+try:
+    from restConn import RestConnection
+    rest_support = True
+except:
+    rest_support = False
+    print 'REST required files not found. REST not supported in this script.'
+
+try:
+    from mqttConn import MQTTConnection
+    mqtt_support = True
+except:
+    mqtt_support = False
+    print 'MQTT required files not found. MQTT not supported in this script.'
+
+try:
+    from bluetoothScanner import *
+    bluetooth_support = True
+except ImportError:
+    bluetooth_support = False
+    print 'Bluetooth is not supported on this machine'
+
+try:
+    from wifiScanner import *
+    wifi_support = True
+except ImportError as test:
+    wifi_support = False
+    print 'Wifi is not supported on this machine'
+    print test
+
 class ConfigLoader:
     def __init__(self, config_file):
         print "Loading " + config_file
@@ -51,7 +80,7 @@ class ConfigLoader:
         rest_conn.config(logger, url)
         self.logger.info("REST URL set to: " + url)
 
-    def load_config(self, rest_support, mqtt_support, wifi_support, bluetooth_support):
+    def load_config(self):
         """Read in the config file, set up the logger, and populate the sensors"""
 
         if rest_support and self.config.has_section("REST"):
