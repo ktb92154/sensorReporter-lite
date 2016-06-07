@@ -77,6 +77,8 @@ class WifiSensor:
 
             if net:
                 value = self.get_network_presence(net, interface)
+                self.logger.info("state: %s", self.state)
+                self.logger.info("value: %s", value)
                 if value != self.state:
                     self.state = value
                     self.publishState()
@@ -94,4 +96,5 @@ class WifiSensor:
 
     def publish_state(self):
         """Publishes the current state"""
+        self.logger.info("publishing state: %s to %s", self.state, self.destination)
         self.publish(self.state, self.destination)
