@@ -27,7 +27,7 @@ class WifiSensor:
     @staticmethod
     def long2net(arg):
         if arg <= 0 or arg >= 0xFFFFFFFF:
-            raise ValueError("illegal netmask value", hex(arg))
+            raise ValueError("Illegal netmask value", hex(arg))
         return 32 - int(round(math.log(0xFFFFFFFF - arg, 2)))
 
     def to_cidr_notation(self, bytes_network, bytes_netmask):
@@ -46,7 +46,7 @@ class WifiSensor:
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
                 if mac.lower() == self.address.lower():
-                    self.logger.info("Switching to ON -> Found matching MAC: %s",mac.lower())
+                    self.logger.info("%s has been found in the network!",mac.lower())
                     value = "ON"
                     break
 
@@ -77,24 +77,20 @@ class WifiSensor:
 
             if net:
                 value = self.get_network_presence(net, interface)
-                self.logger.info("state: %s", self.state)
-                self.logger.info("value: %s", value)
                 if value != self.state:
                     self.state = value
                     self.publish_state()
                     break
 
     def get_presence(self):
-        self.check_network()
         """Detects whether the device is near by or not using lookup_name"""
-
+        self.check_network()
 
     def check_state(self):
         """Detects and publishes any state change"""
-        self.logger.info("Checking Wifi state for %s", self.address)
+        self.logger.info("Checking Wifi state for %s/%s", self.address, self.destination)
         self.get_presence()
 
     def publish_state(self):
         """Publishes the current state"""
-        self.logger.info("publishing state: %s to %s", self.state, self.destination)
         self.publish(self.state, self.destination)
