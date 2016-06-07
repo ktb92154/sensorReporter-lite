@@ -1,8 +1,9 @@
 import ConfigParser
 
+
 class ConfigLoader:
     def __init__(self):
-        config = ConfigParser.ConfigParser(allow_no_value=True)
+        pass
 
     def config_logger(self, file, size, num):
         """Configure a rotating log"""
@@ -35,6 +36,8 @@ class ConfigLoader:
     def load_config(self, config_file):
         """Read in the config file, set up the logger, and populate the sensors"""
         print "Loading " + config_file
+
+        config = ConfigParser.ConfigParser(allow_no_value=True)
         config.read(config_file)
 
         config_logger(config.get("Logging", "File"),
