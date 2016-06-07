@@ -1,9 +1,8 @@
 #!/usr/bin/python
-
 """
  Script:  sensorReporter.py
- Author:  Rich Koshak / Lenny Shirley <http://www.lennysh.com>
- Date:    February 10, 2016
+ Author: Sascha Sambale
+ Date:   June 7th, 2016
  Purpose: Uses the REST API or MQTT to report updates to the configured sensors
 """
 

@@ -1,7 +1,7 @@
 """
  Script:      bluetoothScanner.py
- Author:      Rich Koshak / Lenny Shirley <http://www.lennysh.com>
- Date:        February 11, 2016
+ Author:      Rich Koshak / Lenny Shirley <http://www.lennysh.com> / Sascha Sambale
+ Date:        June 7th, 2016
  Purpose:     Scans for a Bluetooth device with a given address and publishes whether or not the device is present using RSSI figures, or lookup function.
 Credit From:  https://github.com/blakeman399/Bluetooth-Proximity-Light/blob/master/https/github.com/blakeman399/Bluetooth-Proximity-Light.py
 """

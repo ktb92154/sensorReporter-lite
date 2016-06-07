@@ -1,9 +1,18 @@
+"""
+ Script:  configLoader.py
+ Author: Sascha Sambale
+ Date:   June 7th, 2016
+ Purpose: Loads all configurations (sensors, mqtt & rest connection, logger,...)
+        from the given config file (which is being passed as argument)
+"""
+
 import ConfigParser
 import logging
 import logging.handlers
 
 try:
     from restConn import RestConnection
+
     rest_support = True
 except:
     rest_support = False
@@ -11,6 +20,7 @@ except:
 
 try:
     from mqttConn import MQTTConnection
+
     mqtt_support = True
 except:
     mqtt_support = False
@@ -18,6 +28,7 @@ except:
 
 try:
     from bluetoothScanner import *
+
     bluetooth_support = True
 except ImportError:
     bluetooth_support = False
@@ -25,11 +36,13 @@ except ImportError:
 
 try:
     from wifiScanner import *
+
     wifi_support = True
 except ImportError as test:
     wifi_support = False
     print 'Wifi is not supported on this machine'
     print test
+
 
 class ConfigLoader:
     def __init__(self, config_file):
@@ -45,7 +58,7 @@ class ConfigLoader:
 
         file = self.config.get("Logging", "File")
         size = self.config.getint("Logging", "MaxSize")
-        num =  self.config.getint("Logging", "NumFiles")
+        num = self.config.getint("Logging", "NumFiles")
 
         print "Configuring logger: file = " + file + " size = " + str(size) + " num = " + str(num)
         logger.setLevel(logging.DEBUG)
@@ -64,11 +77,12 @@ class ConfigLoader:
         self.mqtt_conn = MQTTConnection()
         self.logger.info("Configuring the MQTT Broker " + self.config.get("MQTT", "Host"))
         self.mqtt_conn.config(self.logger, self.config.get("MQTT", "User"),
-                        self.config.get("MQTT", "Password"), self.config.get("MQTT", "Host"),
-                        self.config.getint("MQTT", "Port"),
-                        self.config.getfloat("MQTT", "Keepalive"),
-                        self.config.get("MQTT", "LWT-Topic"), self.config.get("MQTT", "LWT-Msg"),
-                        self.config.get("MQTT", "TLS"))
+                              self.config.get("MQTT", "Password"), self.config.get("MQTT", "Host"),
+                              self.config.getint("MQTT", "Port"),
+                              self.config.getfloat("MQTT", "Keepalive"),
+                              self.config.get("MQTT", "LWT-Topic"),
+                              self.config.get("MQTT", "LWT-Msg"),
+                              self.config.get("MQTT", "TLS"))
 
     def get_mqtt(self):
         return self.mqtt_conn
@@ -113,7 +127,7 @@ class ConfigLoader:
                                               self.config.getfloat(section, "Poll")))
                 else:
                     msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (
-                    sensor_type, report_type)
+                        sensor_type, report_type)
                     print msg
                     self.logger.error(msg)
 

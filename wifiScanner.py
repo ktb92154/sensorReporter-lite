@@ -1,3 +1,12 @@
+"""
+ Script: wifiScanner.py
+ Author: Sascha Sambale
+ Date:   June 7th, 2016
+ Purpose: Scans for a Wifi device with a given address and publishes whether or not the device is present in the network.
+
+  Based on code provided by Benedikt Waldvogel's Layer 2 network neighbourhood discovery tool.
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import math

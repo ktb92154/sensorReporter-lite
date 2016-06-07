@@ -17,14 +17,67 @@ The install.sh in the config folder lists all the commands necessary  to install
 I won't be able to give you premium support here. So you should be able to understand the code when something unexpected happens. I also won't take any responsibility if something messes up your system.
 
 # Configuration
-The configuration file (you should call it sensorReporter.ini) contains one or more Sensor sections which specify their Type, the MQTT/REST destination to report or subscribe to, reporting type (MQTT or REST), sensor and actuator specific info (e.g. Wifi MAC, BT address, etc.). You can see an example in the default.ini file.
+The configuration file (you should call it sensorReporter.ini) contains one or more Sensor sections which specify their Type, the MQTT/REST destination to report or subscribe to, reporting type (MQTT or REST), sensor and actuator specific info (e.g. Wifi MAC, BT address, etc.). You can see an example in the sensorReporter_demo.ini file.
+
+Example:
+
+```
+[Sensor1]
+Name: MyBluetoothDevice
+Type: Bluetooth
+Address: F6:F7:B8:39:4A:FB
+Destination: presence/bluetooth1
+ReportType: MQTT
+; Needs to be greater than 1 if using the RSSI method, 25 if using the other method.
+Poll: 2
+
+[Sensor2]
+Name: MyWifiDevice
+Type: Wifi
+Address: F7:F8:B9:3A:4B:FC
+Destination: presence/wifi1
+ReportType: MQTT
+; Should be greater than 30, since we don't want to stress the network so much.
+Poll: 60
+```
 
 The Logging section allows one to specify where the scripts log file is saved, its max size, and maximum number of old log files to save.
 
+Example:
+```
+[Logging]
+File: mqttReporter.log
+MaxSize: 67108864
+NumFiles: 10
+```
+
 The REST section is where one specifies the first portion of the URL for the REST API.
+
+Example:
+```
+[REST]
+URL = http://localhost:8080/rest/items/
+```
 
 The MQTT section is where one specifies the user, password, host, and port, for the MQTT Broker. The Topic item in this section is a topic the script listens to.
 One also defines a Last Will and Testament topic and message so other servers can monitor whether this script is running. Finally there is an option for turning on TLS in the connection to the MQTT Broker. It will look for the certificates in ./certs/ca.cert.
+
+Example:
+```
+[MQTT]
+User = user
+Password = password
+Host = host
+Port = 1883
+TLS = no
+Keepalive = 60
+; The MQTT broker will publish the following message on the following topic 
+; when the client disconnects (cleanly or crashes)
+LWT-Topic = status/reporters
+LWT-Msg = My SensorReporter is dead
+```
+
+A full example can be seen in the sensorReporter_demo.ini file of the project.
 
 # Usage
 This script must always be run as root - at least when using Wifi for presence detection.
@@ -46,8 +99,9 @@ Output:
 ```
 your@raspberry:~/sensorReporter-lite/config $ sudo python inquiry_bt.py
 performing inquiry...
-found 1 devices
-00:1E:3B:38:16:5D - Peter 25
+found 2 devices
+00:1E:3B:38:16:5D - MyBluetoothDeviceInDiscoveryMode
+A0:2F:1C:11:67:7F - MyOtherBluetoothDeviceInDiscoveryMode
 ```
 
 ## Manually scan your network for Wifi devices
@@ -63,10 +117,23 @@ Received 9 packets, got 9 answers, remaining 247 packets
   b7:27:e5:af:de:68 192.168.1.111
 [...]
   06:11:35:aa:dc:34  192.168.1.110 myFirstMachineInTheNetwork
-  07:08:54 INFO  b7:27:e5:af:de:68  192.168.1.111 mySecondMachineInTheNetwork
+  b7:27:e5:af:de:68  192.168.1.111 mySecondMachineInTheNetwork
 [...]
 ```
 
 # Remarks
 
-Originally this script has been forked from [rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter). After cleaning the code and removing everything but the Bluetooth, MQTT and REST support, I've also added WIFI support (with help from code of Benedikt Waldvogel's Layer 2 network neighbourhood discovery tool). So this project has moved away from the original source.
+Originally this script has been forked from [rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter). 
+
+## Changes to original fork:
+
+* Added Wifi support (with help from code of Benedikt Waldvogel's Layer 2 network neighbourhood discovery tool)
+* Added Name field to sensor config
+* Added TLS field to MQTT config
+* Removed GPIO support
+* Removed MQTT listener
+* Removed unnecessary files
+* Moved config loader to separate module
+* Code clean up
+
+In short: This project has changed a lot. :)
