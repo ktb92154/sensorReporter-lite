@@ -89,7 +89,6 @@ def on_message(client, userdata, msg):
         if msg is not None:
             print(msg.topic)
             logger.info("Topic: " + msg.topic + " Message: " + str(msg.payload))
-        logger.info("getting states")
         for s in sensors:
             if s.poll > 0:
                 s.check_state()
@@ -167,10 +166,8 @@ def load_config(config_file):
             sensor_type = config.get(section, "Type")
             report_type = config.get(section, "ReportType")
             if report_type == "REST" and restSupport:
-                print "Using REST..."
                 type_connection = restConn
             elif report_type == "MQTT" and mqttSupport:
-                print "Using MQTT..."
                 type_connection = mqttConn
 
             if sensor_type == "Bluetooth" and bluetoothSupport:
