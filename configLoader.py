@@ -77,7 +77,7 @@ class ConfigLoader:
     def config_rest(self, url):
         """Configure the REST connection"""
         rest_conn = RestConnection()
-        rest_conn.config(logger, url)
+        rest_conn.config(self.logger, url)
         self.logger.info("REST URL set to: " + url)
 
     def load_config(self):
