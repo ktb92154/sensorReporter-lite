@@ -18,12 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 def long2net(arg):
-    if (arg <= 0 or arg >= 0xFFFFFFFF):
+    if arg <= 0 or arg >= 0xFFFFFFFF:
         raise ValueError("illegal netmask value", hex(arg))
     return 32 - int(round(math.log(0xFFFFFFFF - arg, 2)))
 
 
-def to_CIDR_notation(bytes_network, bytes_netmask):
+def to_cidr_notation(bytes_network, bytes_netmask):
     network = scapy.utils.ltoa(bytes_network)
     netmask = long2net(bytes_netmask)
     net = "%s/%s" % (network, netmask)
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         if netmask <= 0 or netmask == 0xFFFFFFFF:
             continue
 
-        net = to_CIDR_notation(network, netmask)
+        net = to_cidr_notation(network, netmask)
 
         if interface != scapy.config.conf.iface:
             # see http://trac.secdev.org/scapy/ticket/537

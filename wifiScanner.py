@@ -1,5 +1,7 @@
 from __future__ import absolute_import, division, print_function
-import scapy.all
+import scapy.config
+import scapy.layers.l2
+import scapy.route
 import socket
 import math
 debug = 0
