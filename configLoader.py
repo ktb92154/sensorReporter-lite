@@ -30,17 +30,17 @@ class ConfigLoader:
         self.logger = logger
         return logger
 
-    def config_mqtt(self, mqtt_config):
+    def config_mqtt(self):
         """Configure the MQTT connection"""
 
-        self.logger.info("Configuring the MQTT Broker " + mqtt_config.get("MQTT", "Host"))
-        mqttConn.config(logger, mqtt_config.get("MQTT", "User"),
-                        mqtt_config.get("MQTT", "Password"), mqtt_config.get("MQTT", "Host"),
-                        mqtt_config.getint("MQTT", "Port"),
-                        mqtt_config.getfloat("MQTT", "Keepalive"),
-                        mqtt_config.get("MQTT", "LWT-Topic"), mqtt_config.get("MQTT", "LWT-Msg"),
-                        mqtt_config.get("MQTT", "Topic"), on_message,
-                        mqtt_config.get("MQTT", "TLS"))
+        self.logger.info("Configuring the MQTT Broker " + self.config.get("MQTT", "Host"))
+        mqttConn.config(logger, self.config.get("MQTT", "User"),
+                        self.config.get("MQTT", "Password"), self.config.get("MQTT", "Host"),
+                        self.config.getint("MQTT", "Port"),
+                        self.config.getfloat("MQTT", "Keepalive"),
+                        self.config.get("MQTT", "LWT-Topic"), self.config.get("MQTT", "LWT-Msg"),
+                        self.config.get("MQTT", "Topic"), on_message,
+                        self.config.get("MQTT", "TLS"))
 
     def config_rest(self, url):
         """Configure the REST connection"""
@@ -50,10 +50,10 @@ class ConfigLoader:
     def load_config(self, rest_support, mqtt_support, wifi_support, bluetooth_support):
         """Read in the config file, set up the logger, and populate the sensors"""
 
-        if rest_support and config.has_section("REST"):
-            self.config_rest(config.get("REST", "URL"))
+        if rest_support and self.config.has_section("REST"):
+            self.config_rest(self.config.get("REST", "URL"))
         if mqtt_support:
-            self.config_mqtt(config)
+            self.config_mqtt()
 
         sensors = []
 
