@@ -26,6 +26,8 @@ class ConfigLoader:
         fh.setFormatter(formatter)
         logger.addHandler(fh)
         logger.info("---------------Started")
+
+        self.logger = logger
         return logger
 
     def config_mqtt(self, mqtt_config):
@@ -53,26 +55,28 @@ class ConfigLoader:
         if mqtt_support:
             self.config_mqtt(config)
 
+        sensors = []
+
         self.logger.info("Populating the sensor's list...")
-        for section in config.sections():
+        for section in self.config.sections():
             if section.startswith("Sensor"):
-                sensor_type = config.get(section, "Type")
-                report_type = config.get(section, "ReportType")
+                sensor_type = self.config.get(section, "Type")
+                report_type = self.config.get(section, "ReportType")
                 if report_type == "REST" and rest_support:
                     type_connection = restConn
                 elif report_type == "MQTT" and mqtt_support:
                     type_connection = mqttConn
 
                 if sensor_type == "Bluetooth" and bluetooth_support:
-                    sensors.append(BtSensor(config.get(section, "Address"),
-                                            config.get(section, "Destination"),
+                    sensors.append(BtSensor(self.config.get(section, "Address"),
+                                            self.config.get(section, "Destination"),
                                             type_connection.publish, logger,
-                                            config.getfloat(section, "Poll")))
+                                            self.config.getfloat(section, "Poll")))
                 elif sensor_type == "Wifi" and wifi_support:
-                    sensors.append(WifiSensor(config.get(section, "Address"),
-                                              config.get(section, "Destination"),
+                    sensors.append(WifiSensor(self.config.get(section, "Address"),
+                                              self.config.get(section, "Destination"),
                                               type_connection.publish, logger,
-                                              config.getfloat(section, "Poll")))
+                                              self.config.getfloat(section, "Poll")))
                 else:
                     msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (
                     sensor_type, report_type)
@@ -80,8 +84,8 @@ class ConfigLoader:
                     self.logger.error(msg)
 
             elif section.startswith("Actuator"):
-                actuator_type = config.get(section, "Type")
-                subscribe_type = config.get(section, "SubscribeType")
+                actuator_type = self.config.get(section, "Type")
+                subscribe_type = self.config.get(section, "SubscribeType")
                 if subscribe_type == "REST" and rest_support:
                     msg = "REST based actuators are not yet supported"
                     print msg
@@ -90,7 +94,7 @@ class ConfigLoader:
                     type_connection = mqttConn
                 else:
                     msg = "Skipping actuator '%s' due to lack of support in the script for '%s'. Please see preceding error messages." % (
-                    config.get(section, "Destination"), subscribe_type)
+                        self.config.get(section, "Destination"), subscribe_type)
                     print msg
                     self.logger.warn(msg)
                     continue

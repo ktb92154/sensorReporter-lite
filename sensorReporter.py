@@ -51,9 +51,7 @@ if restSupport:
     restConn = RestConnection()
 if mqttSupport:
     mqttConn = MQTTConnection()
-sensors = []
 actuators = []
-
 # The decorators below causes the creation of a SignalHandler attached to this function for each of the
 # signals we care about using the handles function above. The resultant SignalHandler is registered with
 # the signal.signal so cleanup_and_exit is called when they are received.
@@ -102,16 +100,16 @@ def main():
         sys.exit(1)
 
 
-    config_loader.load_config(restSupport, mqttSupport, wifiSupport, bluetoothSupport)
+    loaded_sensors = config_loader.load_config(restSupport, mqttSupport, wifiSupport, bluetoothSupport)
 
-    for s in sensors:
+    for s in loaded_sensors:
         s.lastPoll = time.time()
 
     logger.info("Kicking off polling threads...")
     while True:
 
         # Kick off a poll of the sensor in a separate process
-        for s in sensors:
+        for s in loaded_sensors:
             if s.poll > 0 and (time.time() - s.lastPoll) > s.poll:
                 s.lastPoll = time.time()
                 Thread(target=check, args=(s,)).start()
