@@ -7,8 +7,6 @@
  Purpose: Uses the REST API or MQTT to report updates to the configured sensors
 """
 
-import logging
-import logging.handlers
 import signal
 import sys
 import time
@@ -47,7 +45,8 @@ except ImportError as test:
     print test
 
 # Globals
-logger = logging.getLogger('sensorReporter')
+config_loader = ConfigLoader(sys.argv[1])
+logger = config_loader.config_logger()
 if restSupport:
     restConn = RestConnection()
 if mqttSupport:
@@ -102,8 +101,8 @@ def main():
         print "No config file specified on the command line!"
         sys.exit(1)
 
-    config_loader = ConfigLoader()
-    config_loader.load_config(sys.argv[1], restSupport, mqttSupport, wifiSupport, bluetoothSupport)
+
+    config_loader.load_config(restSupport, mqttSupport, wifiSupport, bluetoothSupport)
 
     for s in sensors:
         s.lastPoll = time.time()

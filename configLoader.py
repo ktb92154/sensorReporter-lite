@@ -1,21 +1,32 @@
 import ConfigParser
-
+import logging
+import logging.handlers
 
 class ConfigLoader:
-    def __init__(self):
+    def __init__(self, config_file):
+        print "Loading " + config_file
+        self.config = ConfigParser.ConfigParser(allow_no_value=True)
+        self.config.read(config_file)
         pass
 
-    def config_logger(self, file, size, num):
+    def config_logger(self):
         """Configure a rotating log"""
+
+        logger = logging.getLogger('sensorReporter')
+
+        file = self.config.get("Logging", "File")
+        size = self.config.getint("Logging", "MaxSize")
+        num =  self.config.getint("Logging", "NumFiles")
+
         print "Configuring logger: file = " + file + " size = " + str(size) + " num = " + str(num)
-        self.logger.setLevel(logging.DEBUG)
+        logger = logger.setLevel(logging.DEBUG)
         fh = logging.handlers.RotatingFileHandler(file, mode='a', maxBytes=size, backupCount=num)
         fh.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.info("---------------Started")
-        return self.logger
+        logger.addHandler(fh)
+        logger.info("---------------Started")
+        return logger
 
     def config_mqtt(self, mqtt_config):
         """Configure the MQTT connection"""
@@ -34,16 +45,8 @@ class ConfigLoader:
         restConn.config(logger, url)
         self.logger.info("REST URL set to: " + url)
 
-    def load_config(self, config_file, rest_support, mqtt_support, wifi_support, bluetooth_support):
+    def load_config(self, rest_support, mqtt_support, wifi_support, bluetooth_support):
         """Read in the config file, set up the logger, and populate the sensors"""
-        print "Loading " + config_file
-
-        config = ConfigParser.ConfigParser(allow_no_value=True)
-        config.read(config_file)
-
-        self.config_logger(config.get("Logging", "File"),
-                      config.getint("Logging", "MaxSize"),
-                      config.getint("Logging", "NumFiles"))
 
         if rest_support and config.has_section("REST"):
             self.config_rest(config.get("REST", "URL"))
