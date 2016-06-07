@@ -7,11 +7,10 @@ Credit From:  https://github.com/blakeman399/Bluetooth-Proximity-Light/blob/mast
 """
 
 import array
-import fcntl
-import struct
-
 import bluetooth
 import bluetooth._bluetooth as bt
+import fcntl
+import struct
 
 debug = 0
 
@@ -22,13 +21,14 @@ mode = "RSSI"
 class BtSensor:
     """Represents a Bluetooth device"""
 
-    def __init__(self, address, destination, publish, logger, poll):
+    def __init__(self, name, address, destination, publish, logger, poll):
         """Finds whether the BT device is close and publishes its current state"""
 
         self.logger = logger
         self.logger.info(
-                "----------Configuring BluetoothSensor: Address = " + address + " Destination = " + destination)
+                "----------Configuring BluetoothSensor: Name = %s Address = %s Destination = %s",name, address,destination)
         self.logger.info("---Running in " + mode + " mode")
+        self.name = name
         self.address = address
         self.state = "OFF"
         self.destination = destination
@@ -105,7 +105,7 @@ class BtSensor:
             elif self.rssi > 1:
                 if self.near_count < 10:
                     self.logger.info(
-                            "Got signal from " + self.address + ", waiting for stronger one: " + str(
+                            "Got signal from " + self.name + ", waiting for stronger one: " + str(
                                     self.near_count * 10) + "%.")
                 self.far_count -= 1
                 self.near_count += 1
@@ -120,7 +120,7 @@ class BtSensor:
             else:
                 value = self.state
             self.logger.debug(
-                    "Destination " + self.destination + " far count = " + str(
+                    "Name "+self.name+" Destination " + self.destination + " far count = " + str(
                             self.far_count) + " near count = " + str(
                             self.near_count) + " RSSI = " + str(self.rssi))
 

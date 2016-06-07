@@ -100,12 +100,14 @@ class ConfigLoader:
                     type_connection = self.mqtt_conn
 
                 if sensor_type == "Bluetooth" and bluetooth_support:
-                    sensors.append(BtSensor(self.config.get(section, "Address"),
+                    sensors.append(BtSensor(self.config.get(section, "Name"),
+                                            self.config.get(section, "Address"),
                                             self.config.get(section, "Destination"),
                                             type_connection.publish, self.logger,
                                             self.config.getfloat(section, "Poll")))
                 elif sensor_type == "Wifi" and wifi_support:
-                    sensors.append(WifiSensor(self.config.get(section, "Address"),
+                    sensors.append(WifiSensor(self.config.get(section, "Name"),
+                                              self.config.get(section, "Address"),
                                               self.config.get(section, "Destination"),
                                               type_connection.publish, self.logger,
                                               self.config.getfloat(section, "Poll")))
