@@ -1,20 +1,13 @@
 # Introduction
 If you need a script to detect whether someone is at home or not, this might be your solution.
 
-# What does this script do?
+# What can I use this script for?
 This script detects whether certain Bluetooth or WIFI MAC addresses are either nearby (Bluetooth) or in your home network (Wifi) and then sends a message either to an MQTT queue or a REST interface.
 
-# What can I use this script for?
 I'm using this script to detect whether I or my wife are at home (we're always taking our smartphones with us). If we're both not at home, I will trigger certain events at home, since my [OpenHAB](http://www.openhab.org/) installation is attached to the same MQTT queue like this script (which runs on a Raspberry Pi 3).
-
-# Dependencies
-This script depends on the [paho library for MQTT](https://pypi.python.org/pypi/paho-mqtt/1.2) and [python-bluez](http://karulis.github.io/pybluez/) for Bluetooth support (and of course you system must be able to use Bluetooth). You'll also need a working scapy setup for the Wifi support.
 
 # Installation
 The install.sh in the config folder lists all the commands necessary  to install dependencies, link the current folder to /opt and set it up to start  as a service. It has the scripts and commands for both upstart and systemd.
-
-# Support
-I won't be able to give you premium support here. So you should be able to understand the code when something unexpected happens. I also won't take any responsibility if something messes up your system.
 
 # Configuration
 The configuration file (you should call it sensorReporter.ini) contains one or more Sensor sections which specify their Type, the MQTT/REST destination to report or subscribe to, reporting type (MQTT or REST), sensor and actuator specific info (e.g. Wifi MAC, BT address, etc.). You can see an example in the sensorReporter_demo.ini file.
@@ -90,7 +83,13 @@ If it has been installed, run:
 
 `sudo systemctl start sensorReporter`
 
-# Addition information
+# Dependencies
+This script depends on the [paho library for MQTT](https://pypi.python.org/pypi/paho-mqtt/1.2) and [python-bluez](http://karulis.github.io/pybluez/) for Bluetooth support (and of course you system must be able to use Bluetooth). You'll also need a working scapy setup for the Wifi support.
+
+# Support
+I won't be able to give you premium support here. So you should be able to understand the code when something unexpected happens. I also won't take any responsibility if something messes up your system.
+
+# Additional information
 If you want to scan your network/are for certain devices or you want to see whether everything works as expected, you can use the helper scrips in the config directory.
 
 ## Manually scan your area for Bluetooth devices (devices must be in discovery mode)
