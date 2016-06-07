@@ -40,8 +40,29 @@ If it has been installed, run:
 # Addition information
 If you want to scan your network/are for certain devices or you want to see whether everything works as expected, you can use the helper scrips in the config directory.
 
-* inquiry_bt.py: Scans your area for Bluetooth devices (devices must be in discovery mode)
-* inquiry_wifi.py: Scans your network for Wifi devices
+## Scan your area for Bluetooth devices (devices must be in discovery mode)
+
+Output:
+`your@raspberry:~/sensorReporter-lite/config $ sudo python inquiry_bt.py
+performing inquiry...
+found 1 devices
+00:1E:3B:38:16:5D - Peter 25`
+
+## Scan your network for Wifi devices
+
+Output:
+`your@raspberry:~/sensorReporter-lite/config $ sudo python inquiry_wifi.py
+Begin emission:
+Finished to send 256 packets.
+
+Received 9 packets, got 9 answers, remaining 247 packets
+  06:11:35:aa:dc:34 192.168.1.110
+  b7:27:e5:af:de:68 192.168.1.111
+[...]
+  06:11:35:aa:dc:34  192.168.1.110 myFirstMachineInTheNetwork
+  07:08:54 INFO  b7:27:e5:af:de:68  192.168.1.111 mySecondMachineInTheNetwork
+[...]
+`
 
 # Remarks
 
