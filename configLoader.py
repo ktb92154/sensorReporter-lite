@@ -63,7 +63,7 @@ class ConfigLoader:
         """Configure the MQTT connection"""
         self.mqtt_conn = MQTTConnection()
         self.logger.info("Configuring the MQTT Broker " + self.config.get("MQTT", "Host"))
-        self.mqtt_conn.config(logger, self.config.get("MQTT", "User"),
+        self.mqtt_conn.config(self.logger, self.config.get("MQTT", "User"),
                         self.config.get("MQTT", "Password"), self.config.get("MQTT", "Host"),
                         self.config.getint("MQTT", "Port"),
                         self.config.getfloat("MQTT", "Keepalive"),
@@ -103,12 +103,12 @@ class ConfigLoader:
                 if sensor_type == "Bluetooth" and bluetooth_support:
                     sensors.append(BtSensor(self.config.get(section, "Address"),
                                             self.config.get(section, "Destination"),
-                                            type_connection.publish, logger,
+                                            type_connection.publish, self.logger,
                                             self.config.getfloat(section, "Poll")))
                 elif sensor_type == "Wifi" and wifi_support:
                     sensors.append(WifiSensor(self.config.get(section, "Address"),
                                               self.config.get(section, "Destination"),
-                                              type_connection.publish, logger,
+                                              type_connection.publish, self.logger,
                                               self.config.getfloat(section, "Poll")))
                 else:
                     msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (
