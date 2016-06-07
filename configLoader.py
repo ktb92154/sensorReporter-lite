@@ -13,8 +13,9 @@ class ConfigLoader:
         fh.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
-        logger.addHandler(fh)
-        logger.info("---------------Started")
+        self.logger.addHandler(fh)
+        self.logger.info("---------------Started")
+        return self.logger
 
     def config_mqtt(self, mqtt_config):
         """Configure the MQTT connection"""
