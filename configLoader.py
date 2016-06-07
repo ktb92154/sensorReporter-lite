@@ -68,7 +68,6 @@ class ConfigLoader:
                         self.config.getint("MQTT", "Port"),
                         self.config.getfloat("MQTT", "Keepalive"),
                         self.config.get("MQTT", "LWT-Topic"), self.config.get("MQTT", "LWT-Msg"),
-                        self.config.get("MQTT", "Topic"), on_message,
                         self.config.get("MQTT", "TLS"))
 
     def get_mqtt(self):

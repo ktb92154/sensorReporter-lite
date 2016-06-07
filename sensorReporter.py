@@ -44,22 +44,6 @@ def check(s):
     """Gets the current state of the passed in sensor and publishes it"""
     s.check_state()
 
-def on_message(client, userdata, msg):
-    """Called when a message is received from the MQTT broker, send the current sensor state.
-       We don't care what the message is."""
-
-    try:
-        logger.info("Received a request for current state, publishing")
-        if msg is not None:
-            print(msg.topic)
-            logger.info("Topic: " + msg.topic + " Message: " + str(msg.payload))
-        for s in sensors:
-            if s.poll > 0:
-                s.check_state()
-                s.publish_state()
-    except Exception as arg:
-        logger.info("Unexpected error: %s", arg)
-
 def main():
     """Polls the sensor pins and publishes any changes"""
 
