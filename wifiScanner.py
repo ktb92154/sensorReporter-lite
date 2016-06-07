@@ -79,7 +79,7 @@ class WifiSensor:
                 value = self.get_network_presence(net, interface)
                 if value != self.state:
                     self.state = value
-                    #self.publishState()
+                    self.publishState()
                     break
 
     def get_presence(self):
