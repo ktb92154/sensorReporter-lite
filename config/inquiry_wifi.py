@@ -13,7 +13,8 @@ import socket
 import math
 import errno
 
-logging.basicConfig(format='%(asctime)s %(levelname)-5s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)-5s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -24,20 +25,21 @@ def long2net(arg):
 
 
 def to_cidr_notation(bytes_network, bytes_netmask):
-    network = scapy.utils.ltoa(bytes_network)
-    netmask = long2net(bytes_netmask)
-    net = "%s/%s" % (network, netmask)
-    if netmask < 16:
-        logger.warn("%s is too big. skipping" % net)
+    current_network = scapy.utils.ltoa(bytes_network)
+    current_netmask = long2net(bytes_netmask)
+    current_net = "%s/%s" % (current_network, current_netmask)
+    if current_netmask < 16:
+        logger.warn("%s is too big. skipping" % current_net)
         return None
 
-    return net
+    return current_net
 
 
-def scan_and_print_neighbors(net, interface, timeout=1):
-    logger.info("arping %s on %s" % (net, interface))
+def scan_and_print_neighbors(my_net, my_interface, timeout=1):
+    logger.info("arping %s on %s" % (my_net, my_interface))
     try:
-        ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
+        ans, unans = scapy.layers.l2.arping(my_net, iface=my_interface, timeout=timeout,
+                                            verbose=True)
         for s, r in ans.res:
             line = r.sprintf("%Ether.src%  %ARP.psrc%")
             try:
@@ -48,7 +50,7 @@ def scan_and_print_neighbors(net, interface, timeout=1):
                 pass
             logger.info(line)
     except socket.error as e:
-        if e.errno == errno.EPERM:     # Operation not permitted
+        if e.errno == errno.EPERM:  # Operation not permitted
             logger.error("%s. Did you run as root?", e.strerror)
         else:
             raise
@@ -68,7 +70,9 @@ if __name__ == "__main__":
 
         if interface != scapy.config.conf.iface:
             # see http://trac.secdev.org/scapy/ticket/537
-            logger.warn("skipping %s because scapy currently doesn't support arping on non-primary network interfaces", net)
+            logger.warn(
+                    "skipping %s because scapy currently doesn't support arping on non-primary network interfaces",
+                    net)
             continue
 
         if net:

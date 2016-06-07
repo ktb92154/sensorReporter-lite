@@ -40,7 +40,7 @@ If it has been installed, run:
 # Addition information
 If you want to scan your network/are for certain devices or you want to see whether everything works as expected, you can use the helper scrips in the config directory.
 
-## Scan your area for Bluetooth devices (devices must be in discovery mode)
+## Manually scan your area for Bluetooth devices (devices must be in discovery mode)
 
 Output:
 ```
@@ -50,7 +50,7 @@ found 1 devices
 00:1E:3B:38:16:5D - Peter 25
 ```
 
-## Scan your network for Wifi devices
+## Manually scan your network for Wifi devices
 
 Output:
 ```
