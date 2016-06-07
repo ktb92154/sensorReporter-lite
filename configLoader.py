@@ -19,7 +19,7 @@ class ConfigLoader:
         num =  self.config.getint("Logging", "NumFiles")
 
         print "Configuring logger: file = " + file + " size = " + str(size) + " num = " + str(num)
-        logger = logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
         fh = logging.handlers.RotatingFileHandler(file, mode='a', maxBytes=size, backupCount=num)
         fh.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
