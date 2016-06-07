@@ -1,4 +1,4 @@
-import ConfigPaser
+import ConfigParser
 
 class ConfigLoader:
     def __init__(self):
