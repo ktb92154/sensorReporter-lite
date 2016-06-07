@@ -75,8 +75,8 @@ class ConfigLoader:
 
     def config_rest(self, url):
         """Configure the REST connection"""
-        rest_conn = RestConnection()
-        rest_conn.config(self.logger, url)
+        self.rest_conn = RestConnection()
+        self.rest_conn.config(self.logger, url)
         self.logger.info("REST URL set to: " + url)
 
     def load_config(self):
@@ -95,9 +95,9 @@ class ConfigLoader:
                 sensor_type = self.config.get(section, "Type")
                 report_type = self.config.get(section, "ReportType")
                 if report_type == "REST" and rest_support:
-                    type_connection = restConn
+                    type_connection = self.rest_conn
                 elif report_type == "MQTT" and mqtt_support:
-                    type_connection = mqttConn
+                    type_connection = self.mqtt_conn
 
                 if sensor_type == "Bluetooth" and bluetooth_support:
                     sensors.append(BtSensor(self.config.get(section, "Address"),
