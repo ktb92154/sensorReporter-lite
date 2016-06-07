@@ -33,38 +33,38 @@ class ConfigLoader:
         restConn.config(logger, url)
         self.logger.info("REST URL set to: " + url)
 
-    def load_config(self, config_file):
+    def load_config(self, config_file, rest_support, mqtt_support, wifi_support, bluetooth_support):
         """Read in the config file, set up the logger, and populate the sensors"""
         print "Loading " + config_file
 
         config = ConfigParser.ConfigParser(allow_no_value=True)
         config.read(config_file)
 
-        config_logger(config.get("Logging", "File"),
+        self.config_logger(config.get("Logging", "File"),
                       config.getint("Logging", "MaxSize"),
                       config.getint("Logging", "NumFiles"))
 
-        if restSupport and config.has_section("REST"):
-            config_rest(config.get("REST", "URL"))
-        if mqttSupport:
-            config_mqtt(config)
+        if rest_support and config.has_section("REST"):
+            self.config_rest(config.get("REST", "URL"))
+        if mqtt_support:
+            self.config_mqtt(config)
 
         self.logger.info("Populating the sensor's list...")
         for section in config.sections():
             if section.startswith("Sensor"):
                 sensor_type = config.get(section, "Type")
                 report_type = config.get(section, "ReportType")
-                if report_type == "REST" and restSupport:
+                if report_type == "REST" and rest_support:
                     type_connection = restConn
-                elif report_type == "MQTT" and mqttSupport:
+                elif report_type == "MQTT" and mqtt_support:
                     type_connection = mqttConn
 
-                if sensor_type == "Bluetooth" and bluetoothSupport:
+                if sensor_type == "Bluetooth" and bluetooth_support:
                     sensors.append(BtSensor(config.get(section, "Address"),
                                             config.get(section, "Destination"),
                                             type_connection.publish, logger,
                                             config.getfloat(section, "Poll")))
-                elif sensor_type == "Wifi" and wifiSupport:
+                elif sensor_type == "Wifi" and wifi_support:
                     sensors.append(WifiSensor(config.get(section, "Address"),
                                               config.get(section, "Destination"),
                                               type_connection.publish, logger,
@@ -78,11 +78,11 @@ class ConfigLoader:
             elif section.startswith("Actuator"):
                 actuator_type = config.get(section, "Type")
                 subscribe_type = config.get(section, "SubscribeType")
-                if subscribe_type == "REST" and restSupport:
+                if subscribe_type == "REST" and rest_support:
                     msg = "REST based actuators are not yet supported"
                     print msg
                     self.logger.error(msg)
-                elif subscribe_type == "MQTT" and mqttSupport:
+                elif subscribe_type == "MQTT" and mqtt_support:
                     type_connection = mqttConn
                 else:
                     msg = "Skipping actuator '%s' due to lack of support in the script for '%s'. Please see preceding error messages." % (

@@ -103,7 +103,7 @@ def main():
         sys.exit(1)
 
     config_loader = ConfigLoader()
-    config_loader.load_config(sys.argv[1])
+    config_loader.load_config(sys.argv[1], restSupport, mqttSupport, wifiSupport, bluetoothSupport)
     for s in sensors:
         s.lastPoll = time.time()
 
