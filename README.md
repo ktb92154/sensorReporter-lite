@@ -69,4 +69,4 @@ Received 9 packets, got 9 answers, remaining 247 packets
 
 # Remarks
 
-Originally this script has been forked from [rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter), but I've removed everything but the Bluetooth, MQTT and REST support and added WIFI support (with help from code of Benedikt Waldvogel's Layer 2 network neighbourhood discovery tool).
+Originally this script has been forked from [rkoshak/sensorReporter](https://github.com/rkoshak/sensorReporter). After cleaning upda the code and removing everything but the Bluetooth, MQTT and REST support, I've also added WIFI support (with help from code of Benedikt Waldvogel's Layer 2 network neighbourhood discovery tool). So this project has moved away from the original source.
