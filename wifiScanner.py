@@ -107,7 +107,7 @@ class WifiSensor:
     def check_state(self):
         """Detects and publishes any state change"""
         self.logger.info("Checking Wifi state for %s/%s", self.address, self.destination)
-        self.get_presence()
+        self.get_network_presence()
 
     def publish_state(self):
         """Publishes the current state"""
