@@ -58,10 +58,14 @@ class WifiSensor:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
+                s.logger.info(mac);
                 if mac.lower() == self.address.lower():
                     self.logger.info("%s has been found in the network!", self.name)
                     value = "ON"
                     break
+            if value is "OFF":
+                self.logger.info("%s has not been found in the network!", self.name)
+
 
         except socket.error as e:
             if e.errno == errno.EPERM:  # Operation not permitted
