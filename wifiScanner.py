@@ -54,18 +54,18 @@ class WifiSensor:
 
     def get_network_presence(self, net, interface, timeout=1):
         value = "OFF"
-        self.logger.info("Ready to check network presence!")
+        self.logger.debug("Ready to check network presence!")
         try:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
-                self.logger.info(mac)
+                self.logger.debug(mac)
                 if mac.lower() == self.address.lower():
                     self.logger.info("%s has been found in the network!", self.name)
                     value = "ON"
                     break
             if value is "OFF":
-                self.logger.info("%s has not been found in the network!", self.name)
+                self.logger.debug("%s has not been found in the network!", self.name)
 
 
         except socket.error as e:
@@ -107,7 +107,7 @@ class WifiSensor:
 
     def check_state(self):
         """Detects and publishes any state change"""
-        self.logger.info("Checking Wifi state for %s/%s", self.address, self.destination)
+        self.logger.debug("Checking Wifi state for %s/%s", self.address, self.destination)
         self.get_presence()
 
     def publish_state(self):
