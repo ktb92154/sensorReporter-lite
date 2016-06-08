@@ -54,6 +54,7 @@ class WifiSensor:
 
     def get_network_presence(self, net, interface, timeout=1):
         value = "OFF"
+        self.logger.info("Ready to check network presence!")
         try:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
