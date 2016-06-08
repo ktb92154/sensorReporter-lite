@@ -58,7 +58,7 @@ class WifiSensor:
             ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
-                s.logger.info(mac);
+                s.logger.info(mac)
                 if mac.lower() == self.address.lower():
                     self.logger.info("%s has been found in the network!", self.name)
                     value = "ON"
@@ -107,7 +107,7 @@ class WifiSensor:
     def check_state(self):
         """Detects and publishes any state change"""
         self.logger.info("Checking Wifi state for %s/%s", self.address, self.destination)
-        self.get_network_presence()
+        self.get_presence()
 
     def publish_state(self):
         """Publishes the current state"""
