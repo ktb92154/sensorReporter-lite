@@ -68,6 +68,7 @@ class ConfigLoader:
         if log_level is "debug":
             fh.setLevel(logging.DEBUG)
         else:
+            log_level = "info"
             fh.setLevel(logging.INFO)
 
         print "LogLevel set to " + log_level
