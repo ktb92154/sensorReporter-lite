@@ -63,7 +63,14 @@ class ConfigLoader:
         print "Configuring logger: file = " + file + " size = " + str(size) + " num = " + str(num)
         logger.setLevel(logging.DEBUG)
         fh = logging.handlers.RotatingFileHandler(file, mode='a', maxBytes=size, backupCount=num)
-        fh.setLevel(logging.INFO)
+        log_level = self.config.get("Logging", "LogLevel")
+
+        if log_level is "debug":
+            fh.setLevel(logging.DEBUG)
+        else:
+            fh.setLevel(logging.INFO)
+
+        logger.info("LogLevel set to %s.", log_level)
         formatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         logger.addHandler(fh)
