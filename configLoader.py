@@ -70,7 +70,7 @@ class ConfigLoader:
         else:
             fh.setLevel(logging.INFO)
 
-        logger.info("LogLevel set to %s.", log_level)
+        print "LogLevel set to " + log_level
         formatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         logger.addHandler(fh)
