@@ -35,6 +35,9 @@ class WifiSensor:
         self.publish = publish
         self.poll = poll
 
+        # We'll try at least 3 times until we report an "OFF" state (to overcome smartphone sleep policies).
+        self.off_count = 0
+
         self.publish_state()
 
     @staticmethod
@@ -63,10 +66,14 @@ class WifiSensor:
                 if mac.lower() == self.address.lower():
                     self.logger.info("%s has been found in the network!", self.name)
                     value = "ON"
+                    self.off_count = 0
                     break
             if value is "OFF":
-                self.logger.debug("%s has not been found in the network!", self.name)
-
+                self.logger.debug("%s (%s) has not been found in the network!", self.name, self.address)
+                self.off_count += 1
+                if self.off_count < 3:
+                    value = "ON"
+                    self.logger.debug("%s of 3 tries. Will not report OFF yet.", self.off_count)
 
         except socket.error as e:
             if e.errno == errno.EPERM:  # Operation not permitted
