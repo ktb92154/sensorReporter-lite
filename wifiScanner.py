@@ -70,7 +70,7 @@ class WifiSensor:
             if value is "OFF":
                 self.logger.debug("%s (%s) has not been found in the network!", self.name, self.address)
                 self.off_count += 1
-                if self.off_count < 3:
+                if self.off_count <= 3:
                     value = "ON"
                     self.logger.debug("%s of 3 tries. Will not report OFF yet.", self.off_count)
 
