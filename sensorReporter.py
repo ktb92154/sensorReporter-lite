@@ -49,7 +49,7 @@ def main():
 
     config_loader = ConfigLoader(sys.argv[1])
     logger = config_loader.config_logger()
-    loaded_sensors = config_loader.load_config()
+    loaded_sensors = config_loader.load_config(logger)
 
     for s in loaded_sensors:
         s.lastPoll = time.time()

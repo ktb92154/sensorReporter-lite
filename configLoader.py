@@ -102,7 +102,7 @@ class ConfigLoader:
         self.rest_conn.config(self.logger, url)
         self.logger.info("REST URL set to: " + url)
 
-    def load_config(self):
+    def load_config(self, configured_logger):
         """Read in the config file, set up the logger, and populate the sensors"""
 
         if rest_support and self.config.has_section("REST"):
@@ -112,7 +112,7 @@ class ConfigLoader:
 
         sensors = []
 
-        self.logger.info("Populating the sensor's list...")
+        configured_logger.info("Populating the sensor's list...")
         for section in self.config.sections():
             if section.startswith("Sensor"):
                 sensor_type = self.config.get(section, "Type")
@@ -126,19 +126,19 @@ class ConfigLoader:
                     sensors.append(BtSensor(self.config.get(section, "Name"),
                                             self.config.get(section, "Address"),
                                             self.config.get(section, "Destination"),
-                                            type_connection.publish, self.logger,
+                                            type_connection.publish, configured_logger,
                                             self.config.getfloat(section, "Poll")))
                 elif sensor_type == "Wifi" and wifi_support:
                     sensors.append(WifiSensor(self.config.get(section, "Name"),
                                               self.config.get(section, "Address"),
                                               self.config.get(section, "Destination"),
-                                              type_connection.publish, self.logger,
+                                              type_connection.publish, configured_logger,
                                               self.config.getfloat(section, "Poll")))
                 else:
                     msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (
                         sensor_type, report_type)
                     print msg
-                    self.logger.error(msg)
+                    configured_logger.error(msg)
 
             elif section.startswith("Actuator"):
                 actuator_type = self.config.get(section, "Type")
@@ -146,13 +146,13 @@ class ConfigLoader:
                 if subscribe_type == "REST" and rest_support:
                     msg = "REST based actuators are not yet supported"
                     print msg
-                    self.logger.error(msg)
+                    configured_logger.error(msg)
                 elif subscribe_type == "MQTT" and mqtt_support:
                     type_connection = mqttConn
                 else:
                     msg = "Skipping actuator '%s' due to lack of support in the script for '%s'. Please see preceding error messages." % (
                         self.config.get(section, "Destination"), subscribe_type)
                     print msg
-                    self.logger.warn(msg)
+                    configured_logger.warn(msg)
                     continue
         return sensors
