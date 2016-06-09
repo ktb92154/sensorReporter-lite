@@ -112,7 +112,7 @@ class ConfigLoader:
 
         sensors = []
 
-        configured_logger.info("Populating the sensor's list...")
+        configured_logger.debug("Populating the sensor's list...")
         for section in self.config.sections():
             if section.startswith("Sensor"):
                 sensor_type = self.config.get(section, "Type")
@@ -139,20 +139,4 @@ class ConfigLoader:
                         sensor_type, report_type)
                     print msg
                     configured_logger.error(msg)
-
-            elif section.startswith("Actuator"):
-                actuator_type = self.config.get(section, "Type")
-                subscribe_type = self.config.get(section, "SubscribeType")
-                if subscribe_type == "REST" and rest_support:
-                    msg = "REST based actuators are not yet supported"
-                    print msg
-                    configured_logger.error(msg)
-                elif subscribe_type == "MQTT" and mqtt_support:
-                    type_connection = mqttConn
-                else:
-                    msg = "Skipping actuator '%s' due to lack of support in the script for '%s'. Please see preceding error messages." % (
-                        self.config.get(section, "Destination"), subscribe_type)
-                    print msg
-                    configured_logger.warn(msg)
-                    continue
         return sensors
