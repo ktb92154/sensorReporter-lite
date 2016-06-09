@@ -14,10 +14,6 @@ from threading import *
 from signalProc import *
 from configLoader import *
 
-# Globals
-config_loader = ConfigLoader(sys.argv[1])
-logger = config_loader.config_logger()
-
 actuators = []
 # The decorators below causes the creation of a SignalHandler attached to this function for each of the
 # signals we care about using the handles function above. The resultant SignalHandler is registered with
@@ -51,12 +47,14 @@ def main():
         sys.exit(1)
 
 
+    config_loader = ConfigLoader(sys.argv[1])
+    logger = config_loader.config_logger()
     loaded_sensors = config_loader.load_config()
 
     for s in loaded_sensors:
         s.lastPoll = time.time()
 
-    logger.info("Kicking off polling threads...")
+    logger.debug("Kicking off polling threads...")
     while True:
 
         # Kick off a poll of the sensor in a separate process

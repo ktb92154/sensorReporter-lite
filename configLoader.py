@@ -64,9 +64,9 @@ class ConfigLoader:
         logger.setLevel(logging.DEBUG)
         fh = logging.handlers.RotatingFileHandler(file, mode='a', maxBytes=size, backupCount=num)
         log_level = self.config.get("Logging", "LogLevel")
-        print "LogLevel retrieved from options " + log_level
+        print "LogLevel retrieved from options: " + log_level
 
-        if log_level.lower().strip() is "debug":
+        if log_level.lower().strip() == "debug":
             fh.setLevel(logging.DEBUG)
         else:
             log_level = "info"
