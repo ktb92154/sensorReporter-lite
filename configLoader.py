@@ -43,7 +43,6 @@ except ImportError as test:
     print 'Wifi is not supported on this machine'
     print test
 
-
 class ConfigLoader:
     def __init__(self, config_file):
         print "Loading " + config_file
@@ -123,20 +122,13 @@ class ConfigLoader:
                     type_connection = self.mqtt_conn
 
                 if sensor_type == "Bluetooth" and bluetooth_support:
-                    sensors.append(BtSensor(self.config.get(section, "Name"),
-                                            self.config.get(section, "Address"),
-                                            self.config.get(section, "Destination"),
-                                            type_connection.publish, configured_logger,
-                                            self.config.getfloat(section, "Poll")))
+                    sensors.append(BtSensor(self.config,type_connection.publish, configured_logger))
                 elif sensor_type == "Wifi" and wifi_support:
-                    sensors.append(WifiSensor(self.config.get(section, "Name"),
-                                              self.config.get(section, "Address"),
-                                              self.config.get(section, "Destination"),
-                                              type_connection.publish, configured_logger,
-                                              self.config.getfloat(section, "Poll")))
+                    sensors.append(WifiSensor(self.config,type_connection.publish, configured_logger))
                 else:
                     msg = "Either '%s' is an unknown sensor type, not supported in this script, or '%s' is not supported in this script.  Please see preceding error messages to be sure." % (
                         sensor_type, report_type)
                     print msg
                     configured_logger.error(msg)
         return sensors
+

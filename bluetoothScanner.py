@@ -21,19 +21,18 @@ mode = "RSSI"
 class BtSensor:
     """Represents a Bluetooth device"""
 
-    def __init__(self, name, address, destination, publish, logger, poll):
+    def __init__(self, publish, logger):
         """Finds whether the BT device is close and publishes its current state"""
-
         self.logger = logger
-        self.logger.info(
-                "----------Configuring BluetoothSensor: Name = %s Address = %s Destination = %s",name, address,destination)
-        self.logger.info("---Running in " + mode + " mode")
-        self.name = name
-        self.address = address
-        self.state = "OFF"
-        self.destination = destination
+        self.name = config.get(section, "Name")
+        self.address = config.get(section, "Address")
+        self.destination = config.get(section, "Destination")
         self.publish = publish
-        self.poll = poll
+        self.poll = config.getfloat(section, "Poll")
+
+        self.logger.info(
+                "----------Configuring BluetoothSensor: Name = %s Address = %s Destination = %s", self.name,
+                self.address, self.destination)
 
         # assume phone is initially far away
         # self.far = True

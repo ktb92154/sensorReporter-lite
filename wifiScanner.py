@@ -17,24 +17,25 @@ import socket
 
 debug = 0
 
-
 class WifiSensor:
     """Represents a Bluetooth device"""
 
-    def __init__(self, name, address, destination, publish, logger, poll):
+    def __init__(self, publish, logger):
         """Finds whether the BT device is close and publishes its current state"""
 
         self.logger = logger
-        self.logger.info(
-                "----------Configuring WifiSensor: Name = %s Address = %s Destination = %s", name,
-                address, destination)
-        self.name = name
-        self.address = address
-        self.state = "OFF"
-        self.destination = destination
+        self.name = config.get(section, "Name")
+        self.address = config.get(section, "Address")
+        self.destination = config.get(section, "Destination")
         self.publish = publish
-        self.poll = poll
-        self.tries_until_offline = 5;
+        self.poll = config.getfloat(section, "Poll")
+        self.tries_until_offline = config.getfloat(section, "OfflineTrigger")
+
+        self.logger.info(
+                "----------Configuring WifiSensor: Name = %s Address = %s Destination = %s", self.name,
+                self.address, self.destination)
+
+        self.state = "OFF"
 
         # We'll try at least 5 times until we report an "OFF" state (to overcome smartphone sleep policies).
         self.off_count = 0
@@ -64,16 +65,19 @@ class WifiSensor:
             for s, r in ans.res:
                 mac = r.sprintf("%Ether.src%")
                 if mac.lower() == self.address.lower():
-                    self.logger.info("%s (%s) has been found in the network!", self.name, self.address)
+                    self.logger.info("%s (%s) has been found in the network!", self.name,
+                                     self.address)
                     value = "ON"
                     self.off_count = 0
                     break
             if value is "OFF":
-                self.logger.debug("%s (%s) has not been found in the network!", self.name, self.address)
+                self.logger.debug("%s (%s) has not been found in the network!", self.name,
+                                  self.address)
                 self.off_count += 1
                 if self.off_count <= self.tries_until_offline:
                     value = "ON"
-                    self.logger.debug("%s of %s tries. Will not report OFF yet.", self.off_count, self.tries_until_offline)
+                    self.logger.debug("%s of %s tries. Will not report OFF yet.", self.off_count,
+                                      self.tries_until_offline)
 
         except socket.error as e:
             if e.errno == errno.EPERM:  # Operation not permitted
@@ -97,8 +101,8 @@ class WifiSensor:
             if interface != scapy.config.conf.iface:
                 # see http://trac.secdev.org/scapy/ticket/537
                 self.logger.warn(
-                    "skipping %s because scapy currently doesn't support arping on non-primary network interfaces",
-                    net)
+                        "skipping %s because scapy currently doesn't support arping on non-primary network interfaces",
+                        net)
                 continue
 
             if net:
