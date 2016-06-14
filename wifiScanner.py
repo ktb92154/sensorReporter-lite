@@ -20,7 +20,7 @@ debug = 0
 class WifiSensor:
     """Represents a Bluetooth device"""
 
-    def __init__(self, config, publish, logger):
+    def __init__(self, section, config, publish, logger):
         """Finds whether the BT device is close and publishes its current state"""
 
         self.logger = logger
