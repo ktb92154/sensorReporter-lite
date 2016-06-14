@@ -21,7 +21,7 @@ mode = "RSSI"
 class BtSensor:
     """Represents a Bluetooth device"""
 
-    def __init__(self, publish, logger):
+    def __init__(self, config, publish, logger):
         """Finds whether the BT device is close and publishes its current state"""
         self.logger = logger
         self.name = config.get(section, "Name")
