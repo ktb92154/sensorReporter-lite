@@ -15,8 +15,8 @@ import struct
 debug = 0
 
 """Either use 'RSSI' mode, or 'LOOKUP' mode.  RSSI is more reliable."""
-mode = "RSSI"
-# mode = "LOOKUP"
+# mode = "RSSI"
+mode = "LOOKUP"
 
 class BtSensor:
     """Represents a Bluetooth device"""
@@ -40,6 +40,7 @@ class BtSensor:
         self.far_count = 0
         self.near_count = 0
         self.rssi = None
+        self.state = "OFF"
 
         self.publish_state()
 
