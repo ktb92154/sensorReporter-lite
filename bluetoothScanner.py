@@ -40,6 +40,7 @@ class BtSensor:
         self.far_count = 0
         self.near_count = 0
         self.rssi = None
+        self.state = "OFF"
 
         self.publish_state()
 
